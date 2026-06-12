@@ -1,0 +1,143 @@
+import React, { useState } from 'react';
+import { Save } from 'lucide-react';
+import { useData } from '../../context/DataContext';
+export default function AdminSettings() {
+  const { settings, updateSettings } = useData();
+  const [formData, setFormData] = useState(settings);
+  const [isSaving, setIsSaving] = useState(false);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    // Simulate API call
+    setTimeout(() => {
+      updateSettings(formData);
+      setIsSaving(false);
+      alert('Settings saved successfully!');
+    }, 500);
+  };
+  return (
+    <div className="max-w-4xl">
+      <h1 className="text-3xl font-display font-bold mb-8">Site Settings</h1>
+
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* General Info */}
+        <div className="bg-secondary p-6 rounded-2xl border border-color shadow-sm">
+          <h2 className="text-xl font-bold mb-6 border-b border-color pb-4">
+            General Information
+          </h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Hero Title
+              </label>
+              <input
+                type="text"
+                value={formData.heroTitle}
+                onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  heroTitle: e.target.value
+                })
+                }
+                className="w-full bg-primary border border-color rounded-lg px-4 py-2" />
+              
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Hero Subtitle
+              </label>
+              <textarea
+                rows={2}
+                value={formData.heroSubtitle}
+                onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  heroSubtitle: e.target.value
+                })
+                }
+                className="w-full bg-primary border border-color rounded-lg px-4 py-2" />
+              
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                About Text
+              </label>
+              <textarea
+                rows={4}
+                value={formData.aboutText}
+                onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  aboutText: e.target.value
+                })
+                }
+                className="w-full bg-primary border border-color rounded-lg px-4 py-2" />
+              
+            </div>
+          </div>
+        </div>
+
+        {/* Media */}
+        <div className="bg-secondary p-6 rounded-2xl border border-color shadow-sm">
+          <h2 className="text-xl font-bold mb-6 border-b border-color pb-4">
+            Media Links
+          </h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Profile Image URL
+              </label>
+              <div className="flex gap-4">
+                <input
+                  type="url"
+                  value={formData.profileImage}
+                  onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    profileImage: e.target.value
+                  })
+                  }
+                  placeholder="Optional - leave empty for default"
+                  className="flex-1 bg-primary border border-color rounded-lg px-4 py-2" />
+                
+                <img
+                  src={formData.profileImage}
+                  alt="Preview"
+                  className="w-10 h-10 rounded-lg object-cover border border-color" />
+                
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                CV Download URL
+              </label>
+              <input
+                type="url"
+                value={formData.cvUrl}
+                onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  cvUrl: e.target.value
+                })
+                }
+                placeholder="Optional - leave empty for no download link"
+                className="w-full bg-primary border border-color rounded-lg px-4 py-2" />
+              
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={isSaving}
+            className="bg-accent-blue hover:bg-accent-blue/90 text-white px-8 py-3 rounded-xl font-bold transition-colors flex items-center gap-2 disabled:opacity-70">
+            
+            <Save size={20} />
+            {isSaving ? 'Saving...' : 'Save All Settings'}
+          </button>
+        </div>
+      </form>
+    </div>);
+
+}
