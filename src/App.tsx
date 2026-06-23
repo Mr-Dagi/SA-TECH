@@ -1,159 +1,68 @@
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate } from
-'react-router-dom';
-import { ThemeProvider } from './context/ThemeContext';
-import { DataProvider, useData } from './context/DataContext';
-// Layouts
-import { Navbar } from './components/layout/Navbar';
-import { Footer } from './components/layout/Footer';
-import { AdminLayout } from './components/layout/AdminLayout';
-// Public Pages
-import Home from './pages/Home';
-import About from './pages/About';
-import Projects from './pages/Projects';
-import ProjectDetail from './pages/ProjectDetail';
-import Blog from './pages/Blog';
-import BlogPost from './pages/BlogPost';
-import Contact from './pages/Contact';
-// Admin Pages
-import AdminLogin from './pages/admin/AdminLogin';
-import Dashboard from './pages/admin/Dashboard';
-import AdminProjects from './pages/admin/AdminProjects';
-import AdminBlog from './pages/admin/AdminBlog';
-import AdminMessages from './pages/admin/AdminMessages';
-import AdminSettings from './pages/admin/AdminSettings';
-const ProtectedRoute = ({ children }: {children: React.ReactNode;}) => {
-  const { isAdmin } = useData();
-  if (!isAdmin) return <Navigate to="/admin/login" replace />;
-  return <AdminLayout>{children}</AdminLayout>;
-};
-const PublicLayout = ({ children }: {children: React.ReactNode;}) =>
-<div className="flex flex-col min-h-screen">
-    <Navbar />
-    <main className="flex-grow">{children}</main>
-    <Footer />
-  </div>;
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { DataProvider } from './shared/context/DataContext';
+import { ThemeProvider } from './shared/context/ThemeContext';
+import './shared/index.css';
+import './shared/i18n';
+import { Navbar } from './shared/components/layout/Navbar';
+import { Footer } from './shared/components/layout/Footer';
+import Home from './web/pages/Home';
+import About from './web/pages/About';
+import Projects from './web/pages/Projects';
+import ProjectDetail from './web/pages/ProjectDetail';
+import Blog from './web/pages/Blog';
+import BlogPost from './web/pages/BlogPost';
+import Contact from './web/pages/Contact';
+import AdminLogin from './admin/pages/AdminLogin';
+import Dashboard from './admin/pages/Dashboard';
+import AdminProjects from './admin/pages/AdminProjects';
+import AdminBlog from './admin/pages/AdminBlog';
+import AdminMessages from './admin/pages/AdminMessages';
+import AdminSettings from './admin/pages/AdminSettings';
+import { AdminLayout } from './admin/components/layout/AdminLayout';
 
-const AppContent = () => {
+function AppContent() {
+  const location = useLocation();
+  const isAdminPath = location.pathname.startsWith('/admin');
+
   return (
-    <Router>
+    <>
+      {!isAdminPath && <Navbar />}
+
       <Routes>
-        {/* Public Routes */}
-        <Route
-          path="/"
-          element={
-          <PublicLayout>
-              <Home />
-            </PublicLayout>
-          } />
-        
-        <Route
-          path="/about"
-          element={
-          <PublicLayout>
-              <About />
-            </PublicLayout>
-          } />
-        
-        <Route
-          path="/projects"
-          element={
-          <PublicLayout>
-              <Projects />
-            </PublicLayout>
-          } />
-        
-        <Route
-          path="/projects/:id"
-          element={
-          <PublicLayout>
-              <ProjectDetail />
-            </PublicLayout>
-          } />
-        
-        <Route
-          path="/blog"
-          element={
-          <PublicLayout>
-              <Blog />
-            </PublicLayout>
-          } />
-        
-        <Route
-          path="/blog/:id"
-          element={
-          <PublicLayout>
-              <BlogPost />
-            </PublicLayout>
-          } />
-        
-        <Route
-          path="/contact"
-          element={
-          <PublicLayout>
-              <Contact />
-            </PublicLayout>
-          } />
-        
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/projects/:id" element={<ProjectDetail />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:id" element={<BlogPost />} />
+        <Route path="/contact" element={<Contact />} />
 
-        {/* Admin Auth */}
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminLayout><Dashboard /></AdminLayout>} />
+        <Route path="/admin/projects" element={<AdminLayout><AdminProjects /></AdminLayout>} />
+        <Route path="/admin/blog" element={<AdminLayout><AdminBlog /></AdminLayout>} />
+        <Route path="/admin/messages" element={<AdminLayout><AdminMessages /></AdminLayout>} />
+        <Route path="/admin/settings" element={<AdminLayout><AdminSettings /></AdminLayout>} />
 
-        {/* Protected Admin Routes */}
-        <Route
-          path="/admin"
-          element={
-          <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } />
-        
-        <Route
-          path="/admin/projects"
-          element={
-          <ProtectedRoute>
-              <AdminProjects />
-            </ProtectedRoute>
-          } />
-        
-        <Route
-          path="/admin/blog"
-          element={
-          <ProtectedRoute>
-              <AdminBlog />
-            </ProtectedRoute>
-          } />
-        
-        <Route
-          path="/admin/messages"
-          element={
-          <ProtectedRoute>
-              <AdminMessages />
-            </ProtectedRoute>
-          } />
-        
-        <Route
-          path="/admin/settings"
-          element={
-          <ProtectedRoute>
-              <AdminSettings />
-            </ProtectedRoute>
-          } />
-        
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </Router>);
 
-};
-export function App() {
-  return (
-    <ThemeProvider>
-      <DataProvider>
-        <AppContent />
-      </DataProvider>
-    </ThemeProvider>);
-
+      {!isAdminPath && <Footer />}
+    </>
+  );
 }
+
+function App() {
+  return (
+    <BrowserRouter>
+      <ThemeProvider>
+        <DataProvider>
+          <AppContent />
+        </DataProvider>
+      </ThemeProvider>
+    </BrowserRouter>
+  );
+}
+
+export default App;
