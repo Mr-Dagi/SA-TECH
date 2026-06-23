@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@400;600;700;800&display=swap');
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  :root {
+    --bg-primary: #fafafa;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f4f4f5;
+    --text-primary: #0a0a0a;
+    --text-secondary: #52525b;
+    --text-tertiary: #a1a1aa;
+    --border-color: #e4e4e7;
+    --accent-red: #ef4444;
+    --accent-blue: #3b82f6;
+    --accent-green: #10b65b;
+    --accent-orange: #f97316;
+  }
+  .dark {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #111111;
+    --bg-tertiary: #1a1a1a;
+    --text-primary: #f4f4f5;
+    --text-secondary: #a1a1aa;
+    --text-tertiary: #71717a;
+    --border-color: #27272a;
+  }
+  body {
+    @apply bg-primary text-primary font-sans antialiased transition-colors duration-300;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
+  }
+}
+@layer utilities {
+  .bg-primary { background-color: var(--bg-primary); }
+  .bg-secondary { background-color: var(--bg-secondary); }
+  .bg-tertiary { background-color: var(--bg-tertiary); }
+  .text-primary { color: var(--text-primary); }
+  .text-secondary { color: var(--text-secondary); }
+  .text-tertiary { color: var(--text-tertiary); }
+  .border-color { border-color: var(--border-color); }
+  .text-accent-red { color: var(--accent-red); }
+  .text-accent-blue { color: var(--accent-blue); }
+  .text-accent-green { color: var(--accent-green); }
+  .text-accent-orange { color: var(--accent-orange); }
+  .bg-accent-red { background-color: var(--accent-red); }
+  .bg-accent-blue { background-color: var(--accent-blue); }
+  .bg-accent-green { background-color: var(--accent-green); }
+  .bg-accent-orange { background-color: var(--accent-orange); }
+}
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
