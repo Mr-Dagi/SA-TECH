@@ -30,7 +30,7 @@ const ChatAssistant = lazy(() => import('./shared/components/ui/ChatAssistant'))
 
 function AppContent() {
   const location = useLocation();
-  const isAdminPath = location.pathname.startsWith('/admin');
+  const isAdminPath = location.pathname.startsWith('/tlku');
 
   return (
     <>
@@ -45,12 +45,12 @@ function AppContent() {
         <Route path="/blog/:id" element={<BlogPost />} />
         <Route path="/contact" element={<Contact />} />
 
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin" element={<ProtectedRoute><AdminLayout><Dashboard /></AdminLayout></ProtectedRoute>} />
-        <Route path="/admin/projects" element={<ProtectedRoute><AdminLayout><AdminProjects /></AdminLayout></ProtectedRoute>} />
-        <Route path="/admin/blog" element={<ProtectedRoute><AdminLayout><AdminBlog /></AdminLayout></ProtectedRoute>} />
-        <Route path="/admin/messages" element={<ProtectedRoute><AdminLayout><AdminMessages /></AdminLayout></ProtectedRoute>} />
-        <Route path="/admin/settings" element={<ProtectedRoute><AdminLayout><AdminSettings /></AdminLayout></ProtectedRoute>} />
+        <Route path="/tlku/login" element={<AdminLogin />} />
+        <Route path="/tlku" element={<ProtectedRoute><AdminLayout><Dashboard /></AdminLayout></ProtectedRoute>} />
+        <Route path="/tlku/projects" element={<ProtectedRoute><AdminLayout><AdminProjects /></AdminLayout></ProtectedRoute>} />
+        <Route path="/tlku/blog" element={<ProtectedRoute><AdminLayout><AdminBlog /></AdminLayout></ProtectedRoute>} />
+        <Route path="/tlku/messages" element={<ProtectedRoute><AdminLayout><AdminMessages /></AdminLayout></ProtectedRoute>} />
+        <Route path="/tlku/settings" element={<ProtectedRoute><AdminLayout><AdminSettings /></AdminLayout></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

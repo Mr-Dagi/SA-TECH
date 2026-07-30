@@ -23,34 +23,34 @@ export const AdminLayout: React.FC<{
   const navItems = [
   {
     name: 'Dashboard',
-    path: '/admin',
+    path: '/tlku',
     icon: <LayoutDashboard size={20} />
   },
   {
     name: 'Projects',
-    path: '/admin/projects',
+    path: '/tlku/projects',
     icon: <FolderKanban size={20} />
   },
   {
     name: 'Blog Posts',
-    path: '/admin/blog',
+    path: '/tlku/blog',
     icon: <FileText size={20} />
   },
   {
     name: 'Messages',
-    path: '/admin/messages',
+    path: '/tlku/messages',
     icon: <MessageSquare size={20} />,
     badge: unreadCount
   },
   {
     name: 'Settings',
-    path: '/admin/settings',
+    path: '/tlku/settings',
     icon: <Settings size={20} />
   }];
 
   const handleLogout = async () => {
     await logout();
-    navigate('/admin/login');
+    navigate('/tlku/login');
   };
   return (
     <div className="min-h-screen bg-primary flex flex-col md:flex-row">

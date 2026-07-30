@@ -121,7 +121,7 @@ export default function AdminLogin() {
 
     if (success) {
       setFailedAttempts(0);
-      navigate('/admin');
+      navigate('/tlku');
     } else {
       const nextFailures = failedAttempts + 1;
       setFailedAttempts(nextFailures);

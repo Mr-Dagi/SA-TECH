@@ -15,7 +15,7 @@ export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (!isAdmin) {
-    return <Navigate to="/admin/login" state={{ from: location }} replace />;
+    return <Navigate to="/tlku/login" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;

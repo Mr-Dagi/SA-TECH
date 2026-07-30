@@ -24,7 +24,7 @@ export default function Dashboard() {
     icon: <FolderKanban size={24} />,
     color: 'text-blue-500',
     bg: 'bg-blue-500/10',
-    link: '/admin/projects'
+    link: '/tlku/projects'
   },
   {
     title: 'Blog Posts',
@@ -32,7 +32,7 @@ export default function Dashboard() {
     icon: <FileText size={24} />,
     color: 'text-green-500',
     bg: 'bg-green-500/10',
-    link: '/admin/blog'
+    link: '/tlku/blog'
   },
   {
     title: 'Unread Messages',
@@ -40,7 +40,7 @@ export default function Dashboard() {
     icon: <MessageSquare size={24} />,
     color: 'text-orange-500',
     bg: 'bg-orange-500/10',
-    link: '/admin/messages'
+    link: '/tlku/messages'
   },
   {
     title: 'Total Comments',
@@ -85,7 +85,7 @@ export default function Dashboard() {
           <div className="p-6 border-b border-color flex justify-between items-center">
             <h3 className="font-bold text-lg">Recent Messages</h3>
             <Link
-              to="/admin/messages"
+              to="/tlku/messages"
               className="text-sm text-accent-blue hover:underline flex items-center gap-1">
               
               View All <ArrowRight size={14} />
@@ -126,21 +126,21 @@ export default function Dashboard() {
           <h3 className="font-bold text-lg mb-6">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-4">
             <Link
-              to="/admin/projects"
+              to="/tlku/projects"
               className="bg-primary border border-color p-4 rounded-xl hover:border-accent-blue hover:text-accent-blue transition-colors flex flex-col items-center justify-center gap-3 text-center">
               
               <FolderKanban size={24} />
               <span className="font-medium text-sm">Manage Projects</span>
             </Link>
             <Link
-              to="/admin/blog"
+              to="/tlku/blog"
               className="bg-primary border border-color p-4 rounded-xl hover:border-accent-green hover:text-accent-green transition-colors flex flex-col items-center justify-center gap-3 text-center">
               
               <FileText size={24} />
               <span className="font-medium text-sm">Manage Blog</span>
             </Link>
             <Link
-              to="/admin/settings"
+              to="/tlku/settings"
               className="bg-primary border border-color p-4 rounded-xl hover:border-accent-orange hover:text-accent-orange transition-colors flex flex-col items-center justify-center gap-3 text-center col-span-2">
               
               <Star size={24} />
