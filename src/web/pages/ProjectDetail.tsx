@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Github, ExternalLink, Calendar, Code2 } from 'lucide-react';
 import { useData } from '../../shared/context/DataContext';
 import { Rating } from '../../shared/components/ui/Rating';
 import { CommentSection } from '../../shared/components/ui/CommentSection';
+import { DataState } from '../../shared/components/ui/DataState';
+import { Comment } from '../../shared/types';
 import { useTranslation } from 'react-i18next';
 export default function ProjectDetail() {
   const { t } = useTranslation();
@@ -12,11 +14,13 @@ export default function ProjectDetail() {
     id: string;
   }>();
   const navigate = useNavigate();
-  const { projects, addProjectComment } = useData();
+  const { projects, addProjectComment, isLoading, error } = useData();
   const project = projects.find((p) => p.id === id);
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
+  const dataState = <DataState isLoading={isLoading} error={error} />;
+  if (isLoading || error) return dataState;
   if (!project || !project.visible) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center pt-24">
@@ -37,7 +41,7 @@ export default function ProjectDetail() {
       day: 'numeric'
     });
   };
-  const handleAddComment = (commentData: any) => {
+  const handleAddComment = (commentData: Omit<Comment, 'id' | 'createdAt' | 'replies'>) => {
     addProjectComment(project.id, commentData);
   };
   return (
@@ -96,8 +100,9 @@ export default function ProjectDetail() {
           className="rounded-3xl overflow-hidden mb-12 border border-color shadow-xl">
           
           <img
-            src={project.images[0] || 'https://via.placeholder.com/1200x600'}
+            src={project.images[0] || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 120 120"%3E%3Crect width="120" height="120" rx="24" fill="%23f3f4f6"/%3E%3Cpath d="M34 86l20-22 14 16 18-22 10 12v10H34z" fill="%2394a3b8"/%3E%3Ccircle cx="46" cy="46" r="10" fill="%2394a3b8"/%3E%3C/svg%3E'}
             alt={project.title}
+            onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 120 120"%3E%3Crect width="120" height="120" rx="24" fill="%23f3f4f6"/%3E%3Cpath d="M34 86l20-22 14 16 18-22 10 12v10H34z" fill="%2394a3b8"/%3E%3Ccircle cx="46" cy="46" r="10" fill="%2394a3b8"/%3E%3C/svg%3E'; }}
             className="w-full h-auto object-cover aspect-video" />
           
         </motion.div>

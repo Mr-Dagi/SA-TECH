@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Comment } from '../../types';
 import { User, Clock, Reply, Trash2 } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { useTranslation } from 'react-i18next';
+import ReactMarkdown from 'react-markdown';
+import rehypeSanitize from 'rehype-sanitize';
 interface CommentSectionProps {
   comments: Comment[];
   onAddComment: (comment: {
@@ -79,9 +81,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           }
           </div>
         </div>
-        <p className="text-secondary text-sm leading-relaxed mt-3">
-          {comment.content}
-        </p>
+        <div className="text-secondary text-sm leading-relaxed mt-3 prose prose-sm dark:prose-invert">
+          <ReactMarkdown rehypePlugins={[rehypeSanitize]}>{comment.content}</ReactMarkdown>
+        </div>
       </div>
     </div>;
 
@@ -110,7 +112,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         ) :
 
         <p className="text-secondary italic">
-            {t('noCommentsYet')}
+            No comments yet. Be the first!
           </p>
         }
       </div>

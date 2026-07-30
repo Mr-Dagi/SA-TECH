@@ -1,3 +1,8 @@
+export interface ProjectRating {
+  userId: string;
+  value: number;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -7,7 +12,7 @@ export interface Project {
   videoUrl?: string;
   githubUrl?: string;
   liveUrl?: string;
-  ratings: number[];
+  ratings: ProjectRating[];
   averageRating: number;
   comments: Comment[];
   createdAt: string;
@@ -18,13 +23,15 @@ export interface Project {
 export interface BlogPost {
   id: string;
   title: string;
+  slug: string;
   content: string;
   excerpt: string;
   coverImage?: string;
+  category?: string;
   tags: string[];
   comments: Comment[];
   createdAt: string;
-  visible: boolean;
+  published: boolean;
 }
 
 export interface Comment {
@@ -70,4 +77,9 @@ export interface SiteSettings {
   email: string;
   phone: string;
   location: string;
+  name?: string;
+  bio?: string;
+  avatarUrl?: string;
+  siteTitle?: string;
+  tagline?: string;
 }

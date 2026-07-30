@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   FolderKanban,
@@ -8,8 +7,11 @@ import {
   ArrowRight } from
 'lucide-react';
 import { useData } from '../../shared/context/DataContext';
+import { DataState } from '../../shared/components/ui/DataState';
 export default function Dashboard() {
-  const { projects, blogs, messages } = useData();
+  const { projects, blogs, messages, isLoading, error } = useData();
+  const dataState = <DataState isLoading={isLoading} error={error} />;
+  if (isLoading || error) return dataState;
   const unreadMessages = messages.filter((m) => !m.read);
   // Calculate total comments across all projects and blogs
   const totalComments =

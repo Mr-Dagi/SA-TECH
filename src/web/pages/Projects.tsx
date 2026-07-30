@@ -1,12 +1,13 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Filter } from 'lucide-react';
 import { useData } from '../../shared/context/DataContext';
 import { ProjectCard } from '../../shared/components/ui/ProjectCard';
+import { DataState } from '../../shared/components/ui/DataState';
 import { useTranslation } from 'react-i18next';
 export default function Projects() {
   const { t } = useTranslation();
-  const { projects } = useData();
+  const { projects, isLoading, error } = useData();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
   // Get visible projects
@@ -29,6 +30,8 @@ export default function Projects() {
       return matchesSearch && matchesTech;
     });
   }, [visibleProjects, searchTerm, selectedTech]);
+  const dataState = <DataState isLoading={isLoading} error={error} />;
+  if (isLoading || error) return dataState;
   return (
     <div className="pt-32 pb-20 min-h-screen">
       <div className="container mx-auto px-6 md:px-12">

@@ -146,12 +146,6 @@ export const Footer = () => {
           <p className="text-tertiary text-sm">
             &copy; {new Date().getFullYear()} SA teach startup. All rights reserved.
           </p>
-          <button
-            onClick={scrollToTop}
-            className="w-10 h-10 rounded-full bg-tertiary flex items-center justify-center text-secondary hover:bg-primary transition-colors"
-            aria-label="Back to top">
-            <ArrowUp size={18} />
-          </button>
         </div>
       </div>
     </footer>

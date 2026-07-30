@@ -16,20 +16,21 @@ export const Rating: React.FC<RatingProps> = ({
   const [hasVoted, setHasVoted] = useState(false);
   useEffect(() => {
     const votedProjects = JSON.parse(
-      localStorage.getItem('votedProjects') || '[]'
+      window.sessionStorage.getItem('votedProjects') || '[]'
     );
     if (votedProjects.includes(projectId)) {
       setHasVoted(true);
     }
   }, [projectId]);
-  const handleRate = (rating: number) => {
+  const handleRate = async (rating: number) => {
     if (hasVoted) return;
-    rateProject(projectId, rating);
+    const success = await rateProject(projectId, rating);
+    if (!success) return;
     setHasVoted(true);
     const votedProjects = JSON.parse(
-      localStorage.getItem('votedProjects') || '[]'
+      window.sessionStorage.getItem('votedProjects') || '[]'
     );
-    localStorage.setItem(
+    window.sessionStorage.setItem(
       'votedProjects',
       JSON.stringify([...votedProjects, projectId])
     );

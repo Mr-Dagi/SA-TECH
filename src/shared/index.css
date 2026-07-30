@@ -30,6 +30,10 @@
     --text-tertiary: #71717a;
     --border-color: #27272a;
   }
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-primary text-primary font-sans antialiased transition-colors duration-300;
   }

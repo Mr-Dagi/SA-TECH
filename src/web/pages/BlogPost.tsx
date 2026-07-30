@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, MessageSquare, Tag, Share2 } from 'lucide-react';
 import { useData } from '../../shared/context/DataContext';
 import { CommentSection } from '../../shared/components/ui/CommentSection';
+import { DataState } from '../../shared/components/ui/DataState';
+import { Comment } from '../../shared/types';
 import { useTranslation } from 'react-i18next';
 export default function BlogPost() {
   const { t } = useTranslation();
@@ -11,12 +13,14 @@ export default function BlogPost() {
     id: string;
   }>();
   const navigate = useNavigate();
-  const { blogs, addBlogComment } = useData();
-  const post = blogs.find((b) => b.id === id);
+  const { blogs, addBlogComment, isLoading, error } = useData();
+  const post = blogs.find((b) => b.id === id || b.slug === id);
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
-  if (!post || !post.visible) {
+  const dataState = <DataState isLoading={isLoading} error={error} />;
+  if (isLoading || error) return dataState;
+  if (!post || !post.published) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center pt-24">
         <h2 className="text-3xl font-bold mb-4">{t('articleNotFound')}</h2>
@@ -36,7 +40,7 @@ export default function BlogPost() {
       day: 'numeric'
     });
   };
-  const handleAddComment = (commentData: any) => {
+  const handleAddComment = (commentData: Omit<Comment, 'id' | 'createdAt' | 'replies'>) => {
     addBlogComment(post.id, commentData);
   };
   return (

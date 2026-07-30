@@ -40,8 +40,9 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post, index = 0 }) => {
         className="block relative aspect-[16/10] overflow-hidden">
         
         <img
-          src={post.coverImage || 'https://via.placeholder.com/800x500'}
+          src={post.coverImage || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 120 120"%3E%3Crect width="120" height="120" rx="24" fill="%23f3f4f6"/%3E%3Cpath d="M34 86l20-22 14 16 18-22 10 12v10H34z" fill="%2394a3b8"/%3E%3Ccircle cx="46" cy="46" r="10" fill="%2394a3b8"/%3E%3C/svg%3E'}
           alt={post.title}
+          onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 120 120"%3E%3Crect width="120" height="120" rx="24" fill="%23f3f4f6"/%3E%3Cpath d="M34 86l20-22 14 16 18-22 10 12v10H34z" fill="%2394a3b8"/%3E%3Ccircle cx="46" cy="46" r="10" fill="%2394a3b8"/%3E%3C/svg%3E'; }}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
         
         <div className="absolute top-4 left-4 flex gap-2">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -7,8 +7,10 @@ import {
   MessageSquare,
   Settings,
   LogOut,
-  Home } from
-'lucide-react';
+  Home,
+  Menu,
+  X
+} from 'lucide-react';
 import { useData } from '../../../shared/context/DataContext';
 export const AdminLayout: React.FC<{
   children: React.ReactNode;
@@ -16,6 +18,7 @@ export const AdminLayout: React.FC<{
   const location = useLocation();
   const navigate = useNavigate();
   const { logout, messages } = useData();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const unreadCount = messages.filter((m) => !m.read).length;
   const navItems = [
   {
@@ -45,14 +48,21 @@ export const AdminLayout: React.FC<{
     icon: <Settings size={20} />
   }];
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/admin/login');
   };
   return (
     <div className="min-h-screen bg-primary flex flex-col md:flex-row">
+      <div className="md:hidden flex items-center justify-between border-b border-color bg-secondary px-4 py-3">
+        <Link to="/" className="text-lg font-display font-bold">SA teach startup<span className="text-accent-orange">.</span></Link>
+        <button onClick={() => setSidebarOpen((value) => !value)} className="rounded-lg p-2 text-secondary">
+          {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </div>
+      {sidebarOpen && <div className="fixed inset-0 z-40 bg-black/40 md:hidden" onClick={() => setSidebarOpen(false)} />}
       {/* Sidebar */}
-      <aside className="w-full md:w-64 bg-secondary border-r border-color flex-shrink-0 flex flex-col">
+      <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-secondary border-r border-color flex-shrink-0 flex flex-col transition-transform duration-300 md:static md:w-64 md:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6 border-b border-color">
           <Link
             to="/"
@@ -72,6 +82,7 @@ export const AdminLayout: React.FC<{
               <Link
                 key={item.name}
                 to={item.path}
+                onClick={() => setSidebarOpen(false)}
                 className={`flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${isActive ? 'bg-accent-blue/10 text-accent-blue font-medium' : 'text-secondary hover:bg-tertiary hover:text-primary'}`}>
                 
                 <div className="flex items-center space-x-3">

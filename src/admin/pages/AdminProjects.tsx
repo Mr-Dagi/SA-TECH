@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Plus, Edit2, Trash2, Eye, EyeOff, X } from 'lucide-react';
 import { useData } from '../../shared/context/DataContext';
-import { Project } from '../../types';
+import { DataState } from '../../shared/components/ui/DataState';
+import { Project } from '../../shared/types';
 export default function AdminProjects() {
-  const { projects, addProject, updateProject, deleteProject } = useData();
+  const { projects, addProject, updateProject, deleteProject, isLoading, error } = useData();
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -44,7 +46,7 @@ export default function AdminProjects() {
     }
     setIsModalOpen(true);
   };
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const projectData = {
       title: formData.title,
@@ -63,17 +65,24 @@ export default function AdminProjects() {
       visible: formData.visible
     };
     if (editingId) {
-      updateProject(editingId, projectData);
+      await updateProject(editingId, projectData);
     } else {
-      addProject(projectData);
+      await addProject(projectData);
     }
     setIsModalOpen(false);
   };
-  const toggleVisibility = (id: string, currentVisible: boolean) => {
-    updateProject(id, {
+  const toggleVisibility = async (id: string, currentVisible: boolean) => {
+    await updateProject(id, {
       visible: !currentVisible
     });
   };
+
+  const handleDelete = async (id: string) => {
+    await deleteProject(id);
+    setPendingDeleteId(null);
+  };
+  const dataState = <DataState isLoading={isLoading} error={error} />;
+  if (isLoading || error) return dataState;
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
@@ -106,9 +115,7 @@ export default function AdminProjects() {
                   <td className="p-4">
                     <div className="flex items-center gap-3">
                       <img
-                      src={
-                      project.images[0] || 'https://via.placeholder.com/100'
-                      }
+                      src={project.images[0] || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"%3E%3Crect width="120" height="120" rx="24" fill="%23f3f4f6"/%3E%3Cpath d="M34 86l20-22 14 16 18-22 10 12v10H34z" fill="%2394a3b8"/%3E%3Ccircle cx="46" cy="46" r="10" fill="%2394a3b8"/%3E%3C/svg%3E'}
                       alt=""
                       className="w-12 h-12 rounded-lg object-cover" />
                     
@@ -174,7 +181,7 @@ export default function AdminProjects() {
                         <Edit2 size={16} />
                       </button>
                       <button
-                      onClick={() => deleteProject(project.id)}
+                      onClick={() => setPendingDeleteId(project.id)}
                       className="p-2 text-accent-red hover:bg-accent-red/10 bg-primary rounded-lg border border-color">
                       
                         <Trash2 size={16} />
@@ -187,6 +194,19 @@ export default function AdminProjects() {
           </table>
         </div>
       </div>
+
+      {pendingDeleteId && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl border border-color bg-secondary p-6 shadow-2xl">
+            <h3 className="text-xl font-bold">Delete project?</h3>
+            <p className="mt-3 text-sm text-secondary">Are you sure you want to delete this project? This cannot be undone.</p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button onClick={() => setPendingDeleteId(null)} className="rounded-lg border border-color px-4 py-2 text-sm">Cancel</button>
+              <button onClick={() => handleDelete(pendingDeleteId)} className="rounded-lg bg-accent-red px-4 py-2 text-sm font-medium text-white">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal */}
       {isModalOpen &&

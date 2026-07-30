@@ -1,20 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
 import { useData } from '../../shared/context/DataContext';
+import { DataState } from '../../shared/components/ui/DataState';
 export default function AdminSettings() {
-  const { settings, updateSettings } = useData();
+  const { settings, updateSettings, isLoading, error } = useData();
   const [formData, setFormData] = useState(settings);
   const [isSaving, setIsSaving] = useState(false);
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    setFormData(settings);
+  }, [settings]);
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    // Simulate API call
-    setTimeout(() => {
-      updateSettings(formData);
-      setIsSaving(false);
-      alert('Settings saved successfully!');
-    }, 500);
+    await updateSettings(formData);
+    setIsSaving(false);
+    alert('Settings saved successfully!');
   };
+  const dataState = <DataState isLoading={isLoading} error={error} />;
+  if (isLoading || error) return dataState;
   return (
     <div className="max-w-4xl">
       <h1 className="text-3xl font-display font-bold mb-8">Site Settings</h1>

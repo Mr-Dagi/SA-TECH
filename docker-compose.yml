@@ -1,0 +1,25 @@
+version: '3.9'
+services:
+  web:
+    build: .
+    ports:
+      - '5174:80'
+    environment:
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+    depends_on:
+      - api
+
+  api:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - '4000:4000'
+    command: sh -c "npm install && node server/index.js"
+    environment:
+      - PORT=4000
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SECRET_KEY=${SUPABASE_SECRET_KEY}
+      - CLAUDE_API_KEY=${CLAUDE_API_KEY}

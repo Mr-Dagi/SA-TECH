@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Phone, Send, CheckCircle2 } from 'lucide-react';
 import { useData } from '../../shared/context/DataContext';
+import { DataState } from '../../shared/components/ui/DataState';
 import { useTranslation } from 'react-i18next';
 export default function Contact() {
-  const { addMessage, settings } = useData();
+  const { addMessage, settings, isLoading, error } = useData();
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
@@ -13,30 +14,76 @@ export default function Contact() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const handleChange = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-  {
+  const [errors, setErrors] = useState<{ name?: string; email?: string; message?: string }>({});
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
+  useEffect(() => {
+    if (cooldownSeconds <= 0) return;
+    const timer = window.setInterval(() => {
+      setCooldownSeconds((value) => value - 1);
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [cooldownSeconds]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
+    setErrors((current) => ({ ...current, [name]: undefined }));
   };
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const validateForm = () => {
+    const nextErrors: { name?: string; email?: string; message?: string } = {};
+    const trimmedName = formData.name.trim();
+    const trimmedEmail = formData.email.trim();
+    const trimmedMessage = formData.message.trim();
+
+    if (!trimmedName) {
+      nextErrors.name = 'Name is required.';
+    } else if (trimmedName.length > 100) {
+      nextErrors.name = 'Name must be 100 characters or fewer.';
+    }
+
+    if (!trimmedEmail) {
+      nextErrors.email = 'Email is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      nextErrors.email = 'Please enter a valid email address.';
+    }
+
+    if (!trimmedMessage) {
+      nextErrors.message = 'Message is required.';
+    } else if (trimmedMessage.length > 2000) {
+      nextErrors.message = 'Message must be 2000 characters or fewer.';
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (cooldownSeconds > 0) return;
+    if (!validateForm()) return;
+
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      addMessage(formData);
-      setIsSubmitting(false);
-      setIsSuccess(true);
-      setFormData({
-        name: '',
-        email: '',
-        message: ''
-      });
-      setTimeout(() => setIsSuccess(false), 5000);
-    }, 1000);
+    await addMessage({
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      message: formData.message.trim()
+    });
+    setIsSubmitting(false);
+    setIsSuccess(true);
+    setCooldownSeconds(60);
+    setFormData({
+      name: '',
+      email: '',
+      message: ''
+    });
+    window.setTimeout(() => setIsSuccess(false), 5000);
   };
+  const dataState = <DataState isLoading={isLoading} error={error} />;
+  if (isLoading || error) return dataState;
   return (
     <div className="pt-32 pb-20 min-h-screen">
       <div className="container mx-auto px-6 md:px-12">
@@ -224,9 +271,10 @@ export default function Contact() {
                   required
                   value={formData.name}
                   onChange={handleChange}
+                  maxLength={100}
                   className="w-full bg-primary border border-color rounded-xl px-5 py-4 text-primary focus:outline-none focus:border-accent-green transition-colors"
                   placeholder={t('yourName')} />
-                
+                {errors.name && <p className="mt-2 text-sm text-accent-red">{errors.name}</p>}
               </div>
 
               <div>
@@ -245,7 +293,7 @@ export default function Contact() {
                   onChange={handleChange}
                   className="w-full bg-primary border border-color rounded-xl px-5 py-4 text-primary focus:outline-none focus:border-accent-green transition-colors"
                   placeholder={t('yourEmail')} />
-                
+                {errors.email && <p className="mt-2 text-sm text-accent-red">{errors.email}</p>}
               </div>
 
               <div>
@@ -261,19 +309,20 @@ export default function Contact() {
                   required
                   value={formData.message}
                   onChange={handleChange}
-                  rows={5}
+                  maxLength={2000}
+                  rows={6}
                   className="w-full bg-primary border border-color rounded-xl px-5 py-4 text-primary focus:outline-none focus:border-accent-green transition-colors resize-none"
-                  placeholder={t('yourMessage')}>
-                </textarea>
+                  placeholder={t('yourMessage')} />
+                {errors.message && <p className="mt-2 text-sm text-accent-red">{errors.message}</p>}
+                <p className="mt-2 text-sm text-tertiary">{formData.message.trim().length}/2000 characters</p>
               </div>
 
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-accent-green hover:bg-accent-green/90 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
+                disabled={isSubmitting || cooldownSeconds > 0}
+                className="w-full bg-accent-green hover:bg-accent-green/90 text-white px-8 py-4 rounded-xl font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-70">
                 
-                {isSubmitting ? t('sending') : t('sendMessage')}
-                {!isSubmitting && <Send size={20} />}
+                {isSubmitting ? 'Sending...' : cooldownSeconds > 0 ? `Please wait ${cooldownSeconds}s` : 'Send Message'} <Send size={18} />
               </button>
             </form>
           </motion.div>
