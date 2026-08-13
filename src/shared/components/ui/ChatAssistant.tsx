@@ -18,31 +18,63 @@ const clamp = (value: number, min: number, max: number) => Math.min(Math.max(val
 const getLocalAssistantReply = (question: string) => {
   const normalized = question.toLowerCase();
 
-  if (normalized.includes('contact') || normalized.includes('email') || normalized.includes('phone') || normalized.includes('reach')) {
-    return 'You can reach me at dagia2061@gmail.com or +251-996-881-232. The contact page also has a form if you want to send a message directly.';
+  if (normalized.includes('admin') || normalized.includes('login') || normalized.includes('/tlku')) {
+    return 'The admin dashboard is restricted to authorized users only. For general questions, please use the public website and contact form.';
   }
 
-  if (normalized.includes('project') || normalized.includes('portfolio') || normalized.includes('work')) {
-    return 'This portfolio highlights selected projects, services, and a short introduction to my background. The Projects page is the best place to see examples of my work.';
+  if (normalized.includes('security') || normalized.includes('password') || normalized.includes('api key') || normalized.includes('private')) {
+    return 'For your security, please use only the official website contact methods. Do not share passwords, verification codes, admin credentials, or private account details in chat.';
   }
 
-  if (normalized.includes('service') || normalized.includes('services')) {
-    return 'I work across web development, app development, UI/UX design, cloud infrastructure, and AI automation. The Home page summarizes the main services.';
+  if (normalized.includes('contact') || normalized.includes('email') || normalized.includes('phone') || normalized.includes('reach') || normalized.includes('hire')) {
+    return 'You can contact SA teach startup through the contact form on the website or directly by email at dagia2061@gmail.com. You can also call +251-996-881-232. For project inquiries, the contact form is the best next step.';
   }
 
-  if (normalized.includes('about') || normalized.includes('who')) {
-    return 'I am a product designer and full-stack developer focused on building polished digital products with strong user experience and reliable implementation.';
+  if (normalized.includes('price') || normalized.includes('pricing') || normalized.includes('cost') || normalized.includes('estimate')) {
+    return 'The website does not publish standard pricing. The cost depends on project scope, complexity, timeline, and requirements. The best way to get an estimate is to send your project details through the contact form or email.';
   }
 
-  if (normalized.includes('blog')) {
-    return 'You can browse the blog section for articles about web development, design, and modern product work.';
+  if (normalized.includes('project') || normalized.includes('portfolio') || normalized.includes('work') || normalized.includes('case study')) {
+    return 'You can explore the portfolio on the Projects page. The site highlights examples such as an E-Commerce Platform, Task Management App, and Portfolio Website. Each project page includes more detail about the tools and purpose.';
   }
 
-  if (normalized.includes('hello') || normalized.includes('hi') || normalized.includes('thanks')) {
-    return 'Hello! I can help you explore the site, explain the services, point you to the contact details, or guide you to the projects and blog.';
+  if (normalized.includes('service') || normalized.includes('services') || normalized.includes('what do you do') || normalized.includes('offer')) {
+    return 'SA teach startup offers web development, app development, AI and automation, branding and marketing, DevOps and cloud support, and consulting. The Home page and About page explain the services in more detail.';
   }
 
-  return 'I can help you navigate the site and answer simple questions about services, projects, contact details, and the about page. Try asking something like “What services do you offer?”';
+  if (normalized.includes('about') || normalized.includes('who is') || normalized.includes('who are you') || normalized.includes('dagmawi')) {
+    return 'Dagmawi Alemayhu is presented as a product designer, digital creative director, and frontend/full-stack developer focused on modern, user-first digital experiences and business-friendly product design.';
+  }
+
+  if (normalized.includes('blog') || normalized.includes('article') || normalized.includes('write') || normalized.includes('content')) {
+    return 'Yes, the website includes a blog section with technology, design, and development articles. You can read the latest posts on the Blog page and browse topics related to frontend work, product design, and digital trends.';
+  }
+
+  if (normalized.includes('website') || normalized.includes('this site') || normalized.includes('home') || normalized.includes('page')) {
+    return 'This website is a portfolio and service site for SA teach startup. It helps visitors understand the brand, browse projects, read blog articles, and send project inquiries through the contact form.';
+  }
+
+  if (normalized.includes('design') || normalized.includes('ui') || normalized.includes('ux')) {
+    return 'Yes, the brand strongly emphasizes product design, UI/UX, and user-first digital experiences. The site presents design thinking as part of the service offering alongside engineering and strategy.';
+  }
+
+  if (normalized.includes('thank') || normalized.includes('hello') || normalized.includes('hi') || normalized.includes('hey')) {
+    return 'Hello! I can help with SA teach startup services, project examples, business information, blog content, and the official contact details.';
+  }
+
+  if (normalized.includes('location') || normalized.includes('addis')) {
+    return 'The business is based in Addis Ababa, Ethiopia.';
+  }
+
+  if (normalized.includes('resume') || normalized.includes('cv') || normalized.includes('experience')) {
+    return 'The portfolio presents Dagmawi Alemayhu as a product designer and digital creative director with experience in user-focused design, frontend development, and digital product work.';
+  }
+
+  if (normalized.includes('job') || normalized.includes('hiring') || normalized.includes('recruit') || normalized.includes('team')) {
+    return 'For recruiting or partnership inquiries, please use the official contact form or email. The website is designed for business inquiries, services, and project discussions.';
+  }
+
+  return 'I can help with SA teach startup services, portfolio projects, blog content, business contact information, and general website guidance. For detailed project questions, the best next step is to use the contact form or email dagia2061@gmail.com.';
 };
 
 const ChatAssistant = () => {
@@ -54,13 +86,12 @@ const ChatAssistant = () => {
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; text: string }[]>([
     {
       role: 'assistant',
-      text: 'Hi there! I am Chuna, your AI chatbot assistant. I can help you explore the website, explain pages, answer FAQs, and guide you to contact options.'
+      text: 'Hello! I’m Dagmawi’s portfolio assistant. I can help you learn about his background, services, projects, and contact details.'
     }
   ]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
-  const FALLBACK_RESPONSE = 'Our assistant is temporarily offline. Please use the contact page or email for immediate support.';
+  const FALLBACK_RESPONSE = 'Sorry, I could not answer that right now. Please use the official contact form or email dagia2061@gmail.com for the fastest support.';
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY);
@@ -104,6 +135,11 @@ const ChatAssistant = () => {
   };
 
   const handleDragStart = (event: React.PointerEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement;
+    if (target.closest('button')) {
+      return;
+    }
+
     const startX = event.clientX;
     const startY = event.clientY;
     setDragStart({ x: startX, y: startY, initX: position.x, initY: position.y });
@@ -138,7 +174,6 @@ const ChatAssistant = () => {
     }
 
     setError(null);
-    setNotice(null);
     const safeQuestion = sanitizeText(trimmed).slice(0, 400);
     setQuestion('');
     addMessage('user', safeQuestion);
@@ -148,9 +183,8 @@ const ChatAssistant = () => {
       const localReply = getLocalAssistantReply(safeQuestion);
       const text = sanitizeText(localReply);
       addMessage('assistant', text);
-      setNotice('The assistant is running in local fallback mode because no external AI backend is configured.');
     } catch (err) {
-      setError('Unable to generate a response right now. Please try again later.');
+      setError('Sorry, I could not answer that right now. Please try again or use the official contact form.');
       addMessage('assistant', FALLBACK_RESPONSE);
     } finally {
       setLoading(false);
@@ -204,12 +238,13 @@ const ChatAssistant = () => {
               <div className="flex items-center gap-3">
                 <MessageSquare size={20} aria-hidden="true" />
                 <div>
-                  <p className="text-sm font-semibold">Chuna — Chatbot Assistant</p>
-                  <p className="text-[11px] text-white/80">Hover for help or drag to reposition. Click the close button when finished.</p>
+                  <p className="text-sm font-semibold">Dagmawi — Portfolio Assistant</p>
+                  <p className="text-[11px] text-white/80">Ask about projects, skills, experience, or how to get in touch.</p>
                 </div>
               </div>
               <button
                 type="button"
+                onPointerDown={(event) => event.stopPropagation()}
                 onClick={(event) => {
                   event.stopPropagation();
                   toggleOpen();
@@ -239,12 +274,6 @@ const ChatAssistant = () => {
                   placeholder="Ask me anything about the website, services, or how to get started..."
                   aria-label="Ask the assistant a question"
                 />
-                {notice && (
-                  <div role="status" className="rounded-2xl border border-yellow-400/40 bg-yellow-50 px-3 py-2 text-sm text-yellow-900 dark:border-yellow-500/40 dark:bg-yellow-500/10 dark:text-yellow-200 max-h-24 overflow-auto">
-                    <strong className="uppercase tracking-[0.16em]">Assistant offline:</strong>
-                    <div className="mt-1 text-sm">{notice}</div>
-                  </div>
-                )}
                 {error && <p className="text-sm text-accent-red">{error}</p>}
                 <div className="flex items-center justify-between gap-3">
                   <button
@@ -274,8 +303,8 @@ const ChatAssistant = () => {
             whileTap={{ scale: 0.98 }}
             className="flex h-14 w-14 items-center justify-center rounded-full bg-accent-blue text-white shadow-2xl shadow-accent-blue/30 transition focus:outline-none focus:ring-2 focus:ring-accent-orange"
             onClick={toggleOpen}
-            aria-label="Open Chuna chatbot assistant"
-            title="Open Chuna chatbot assistant"
+            aria-label="Open Dagmawi portfolio assistant"
+            title="Open Dagmawi portfolio assistant"
           >
             <ArrowUpRight size={24} aria-hidden="true" />
           </motion.button>
