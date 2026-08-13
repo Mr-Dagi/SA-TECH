@@ -1,0 +1,5 @@
+dist
+server
+deploy_clean_repo
+deploy_snapshot
+**/tailwind.config.js

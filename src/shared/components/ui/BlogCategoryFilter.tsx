@@ -2,23 +2,38 @@ import React from 'react';
 
 interface BlogCategoryFilterProps {
   categories: string[];
-  selectedCategory: string;
-  onSelectCategory: (category: string) => void;
+  selected: string;
+  onChange: (category: string) => void;
 }
 
-export const BlogCategoryFilter: React.FC<BlogCategoryFilterProps> = ({ categories, selectedCategory, onSelectCategory }) => (
-  <div className="flex flex-wrap gap-2 mb-6">
-    {categories.map((category) => (
-      <button
-        key={category}
-        type="button"
-        onClick={() => onSelectCategory(category)}
-        className={`rounded-full border px-4 py-2 text-sm transition ${
-          selectedCategory === category ? 'bg-accent-blue text-white' : 'bg-secondary text-primary border-color'
-        }`}
-      >
-        {category}
-      </button>
-    ))}
-  </div>
-);
+export const BlogCategoryFilter: React.FC<BlogCategoryFilterProps> = ({
+  categories,
+  selected,
+  onChange
+}) => {
+  const allCategories = ['All', ...categories];
+
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
+      {allCategories.map((category) => {
+        const isSelected = selected === category;
+
+        return (
+          <button
+            key={category}
+            type="button"
+            onClick={() => onChange(category)}
+            className={`rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200 ${
+              isSelected
+                ? 'bg-accent-orange text-white border-accent-orange shadow-md'
+                : 'bg-secondary text-primary border-color hover:border-accent-orange hover:text-accent-orange'
+            }`}
+            aria-pressed={isSelected}
+          >
+            {category}
+          </button>
+        );
+      })}
+    </div>
+  );
+};

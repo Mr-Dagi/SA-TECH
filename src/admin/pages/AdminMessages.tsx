@@ -7,12 +7,13 @@ export default function AdminMessages() {
   const { messages, markMessageRead, deleteMessage, markAllMessagesRead, isLoading, error } = useData();
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const dataState = <DataState isLoading={isLoading} error={error} />;
-  if (isLoading || error) return dataState;
 
   const hasUnread = useMemo(() => messages.some((m) => !m.read), [messages]);
   const allSelected = messages.length > 0 && selectedIds.size === messages.length;
   const someSelected = selectedIds.size > 0;
+
+  const dataState = <DataState isLoading={isLoading} error={error} />;
+  if (isLoading || error) return dataState;
 
   const toggleSelect = (id: string) => {
     setSelectedIds((current) => {
