@@ -29,7 +29,7 @@ export default function AdminLogin() {
         </div>
 
         {error &&
-        <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-lg text-sm text-center mb-6">
+          <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-lg text-sm text-center mb-6">
             {error}
           </div>
         }
@@ -43,7 +43,7 @@ export default function AdminLogin() {
               <User
                 className="absolute left-4 top-1/2 transform -translate-y-1/2 text-tertiary"
                 size={20} />
-              
+
               <input
                 type="text"
                 value={username}
@@ -51,7 +51,7 @@ export default function AdminLogin() {
                 className="w-full bg-primary border border-color rounded-xl pl-12 pr-4 py-3 text-primary focus:outline-none focus:border-accent-blue transition-colors"
                 placeholder="admin"
                 required />
-              
+
             </div>
           </div>
 
@@ -63,7 +63,7 @@ export default function AdminLogin() {
               <Lock
                 className="absolute left-4 top-1/2 transform -translate-y-1/2 text-tertiary"
                 size={20} />
-              
+
               <input
                 type="password"
                 value={password}
@@ -71,14 +71,14 @@ export default function AdminLogin() {
                 className="w-full bg-primary border border-color rounded-xl pl-12 pr-4 py-3 text-primary focus:outline-none focus:border-accent-blue transition-colors"
                 placeholder="admin123"
                 required />
-              
+
             </div>
           </div>
 
           <button
             type="submit"
             className="w-full bg-accent-blue hover:bg-accent-blue/90 text-white px-8 py-3.5 rounded-xl font-bold transition-colors flex items-center justify-center gap-2 mt-4">
-            
+
             Login to Dashboard <ArrowRight size={18} />
           </button>
         </form>
