@@ -67,7 +67,7 @@ export const Navbar = () => {
             )}
             {isAdmin &&
             <Link
-              to="/admin"
+              to="/tlku"
               className="text-sm font-medium text-accent-blue hover:text-accent-blue/80 transition-colors">
               
                 {t('adminDashboard')}
@@ -148,7 +148,7 @@ export const Navbar = () => {
         )}
           {isAdmin &&
         <Link
-          to="/admin"
+          to="/tlku"
           onClick={() => setIsOpen(false)}
           className="text-lg font-medium text-accent-blue">
           

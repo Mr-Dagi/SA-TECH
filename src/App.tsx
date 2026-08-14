@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { DataProvider } from './shared/context/DataContext';
+import { DataProvider, useData } from './shared/context/DataContext';
 import { ThemeProvider } from './shared/context/ThemeContext';
 import './shared/index.css';
 import './shared/i18n';
@@ -21,9 +21,16 @@ import AdminMessages from './admin/pages/AdminMessages';
 import AdminSettings from './admin/pages/AdminSettings';
 import { AdminLayout } from './admin/components/layout/AdminLayout';
 
+function RequireAdmin({ children }: { children: React.ReactNode }) {
+  const { isAdmin, authReady } = useData();
+  if (!authReady) return null;
+  if (!isAdmin) return <Navigate to="/tlku/login" replace />;
+  return <>{children}</>;
+}
+
 function AppContent() {
   const location = useLocation();
-  const isAdminPath = location.pathname.startsWith('/admin');
+  const isAdminPath = location.pathname.startsWith('/tlku');
 
   return (
     <>
@@ -38,12 +45,12 @@ function AppContent() {
         <Route path="/blog/:id" element={<BlogPost />} />
         <Route path="/contact" element={<Contact />} />
 
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin" element={<AdminLayout><Dashboard /></AdminLayout>} />
-        <Route path="/admin/projects" element={<AdminLayout><AdminProjects /></AdminLayout>} />
-        <Route path="/admin/blog" element={<AdminLayout><AdminBlog /></AdminLayout>} />
-        <Route path="/admin/messages" element={<AdminLayout><AdminMessages /></AdminLayout>} />
-        <Route path="/admin/settings" element={<AdminLayout><AdminSettings /></AdminLayout>} />
+        <Route path="/tlku/login" element={<AdminLogin />} />
+        <Route path="/tlku" element={<RequireAdmin><AdminLayout><Dashboard /></AdminLayout></RequireAdmin>} />
+        <Route path="/tlku/projects" element={<RequireAdmin><AdminLayout><AdminProjects /></AdminLayout></RequireAdmin>} />
+        <Route path="/tlku/blog" element={<RequireAdmin><AdminLayout><AdminBlog /></AdminLayout></RequireAdmin>} />
+        <Route path="/tlku/messages" element={<RequireAdmin><AdminLayout><AdminMessages /></AdminLayout></RequireAdmin>} />
+        <Route path="/tlku/settings" element={<RequireAdmin><AdminLayout><AdminSettings /></AdminLayout></RequireAdmin>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
