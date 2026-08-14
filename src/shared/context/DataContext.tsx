@@ -1,4 +1,6 @@
 import React, { useEffect, useState, createContext, useContext } from 'react';
+import { getUser, onAuthChange, logout as identityLogout, AUTH_EVENTS } from '@netlify/identity';
+import type { User } from '@netlify/identity';
 import { Project, BlogPost, Message, SiteSettings, Comment } from '../types';
 import {
   initialProjects,
@@ -6,13 +8,14 @@ import {
   initialMessages,
   initialSettings } from
 '../data/mockData';
+const isAdminUser = (user: User | null) => !!user?.roles?.includes('admin');
 interface DataContextType {
   projects: Project[];
   blogs: BlogPost[];
   messages: Message[];
   settings: SiteSettings;
   isAdmin: boolean;
-  login: () => void;
+  authReady: boolean;
   logout: () => void;
   // Projects
   addProject: (
@@ -63,9 +66,8 @@ export const DataProvider: React.FC<{
     const saved = localStorage.getItem('settings');
     return saved ? JSON.parse(saved) : initialSettings;
   });
-  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
-    return localStorage.getItem('isAdmin') === 'true';
-  });
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
   // Save to localStorage on change
   useEffect(() => {
     localStorage.setItem('projects', JSON.stringify(projects));
@@ -80,10 +82,28 @@ export const DataProvider: React.FC<{
     localStorage.setItem('settings', JSON.stringify(settings));
   }, [settings]);
   useEffect(() => {
-    localStorage.setItem('isAdmin', String(isAdmin));
-  }, [isAdmin]);
-  const login = () => setIsAdmin(true);
-  const logout = () => setIsAdmin(false);
+    let mounted = true;
+    getUser().then((user) => {
+      if (mounted) {
+        setIsAdmin(isAdminUser(user));
+        setAuthReady(true);
+      }
+    });
+    const unsubscribe = onAuthChange((event, user) => {
+      if (event === AUTH_EVENTS.LOGOUT) {
+        setIsAdmin(false);
+      } else {
+        setIsAdmin(isAdminUser(user));
+      }
+    });
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
+  }, []);
+  const logout = () => {
+    identityLogout().catch(() => {});
+  };
   const generateId = () =>
     typeof crypto !== 'undefined' && 'randomUUID' in crypto
       ? crypto.randomUUID()
@@ -234,7 +254,7 @@ export const DataProvider: React.FC<{
         messages,
         settings,
         isAdmin,
-        login,
+        authReady,
         logout,
         addProject,
         updateProject,
