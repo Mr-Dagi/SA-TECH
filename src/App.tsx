@@ -23,7 +23,7 @@ import { AdminLayout } from './admin/components/layout/AdminLayout';
 
 function AppContent() {
   const location = useLocation();
-  const isAdminPath = location.pathname.startsWith('/admin');
+  const isAdminPath = location.pathname.startsWith('/tlku');
 
   return (
     <>
@@ -38,12 +38,12 @@ function AppContent() {
         <Route path="/blog/:id" element={<BlogPost />} />
         <Route path="/contact" element={<Contact />} />
 
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin" element={<AdminLayout><Dashboard /></AdminLayout>} />
-        <Route path="/admin/projects" element={<AdminLayout><AdminProjects /></AdminLayout>} />
-        <Route path="/admin/blog" element={<AdminLayout><AdminBlog /></AdminLayout>} />
-        <Route path="/admin/messages" element={<AdminLayout><AdminMessages /></AdminLayout>} />
-        <Route path="/admin/settings" element={<AdminLayout><AdminSettings /></AdminLayout>} />
+        <Route path="/tlku/login" element={<AdminLogin />} />
+        <Route path="/tlku" element={<AdminLayout><Dashboard /></AdminLayout>} />
+        <Route path="/tlku/projects" element={<AdminLayout><AdminProjects /></AdminLayout>} />
+        <Route path="/tlku/blog" element={<AdminLayout><AdminBlog /></AdminLayout>} />
+        <Route path="/tlku/messages" element={<AdminLayout><AdminMessages /></AdminLayout>} />
+        <Route path="/tlku/settings" element={<AdminLayout><AdminSettings /></AdminLayout>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

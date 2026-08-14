@@ -13,7 +13,7 @@ export default function AdminLogin() {
     // Hardcoded credentials for demo purposes
     if (username === 'admin' && password === 'admin123') {
       login();
-      navigate('/admin');
+      navigate('/tlku');
     } else {
       setError('Invalid username or password');
     }
