@@ -47,7 +47,7 @@ export const Navbar = () => {
       
       <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
         <Link to="/" className="flex items-center gap-3">
-          <img src="/sa.png" alt="SA teach startup logo" className="h-12 w-auto rounded-full shadow-md" />
+              <img src="/sa-1.png" alt="SA-Tech Startup logo" className="h-12 w-auto rounded-full shadow-md" />
           <span className="text-2xl font-display font-bold tracking-tight">
             SA teach startup<span className="text-accent-orange">.</span>
           </span>

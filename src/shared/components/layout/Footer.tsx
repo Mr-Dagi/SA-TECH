@@ -5,12 +5,6 @@ import { useTranslation } from 'react-i18next';
 export const Footer = () => {
   const { settings } = useData();
   const { t } = useTranslation();
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
   return (
     <footer className="bg-secondary border-t border-color pt-16 pb-8">
       <div className="container mx-auto px-6 md:px-12">
@@ -19,7 +13,7 @@ export const Footer = () => {
             <Link
               to="/"
               className="flex items-center gap-3 mb-4 inline-flex">
-              <img src="sa.png" alt="SA teach startup logo" className="h-12 w-auto rounded-full shadow-lg" />
+              <img src="/sa-1.png" alt="SA-Tech Startup logo" className="h-12 w-auto rounded-full shadow-lg" />
               <div>
                 <span className="text-2xl font-display font-bold tracking-tight">
                   SA teach startup<span className="text-accent-orange">.</span>
@@ -32,7 +26,7 @@ export const Footer = () => {
 
             <div className="rounded-[2rem] border border-color bg-primary/10 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.12)]">
               <p className="text-secondary leading-relaxed mb-5">
-                I build elegant, user-first interface experiences that feel modern, fast, and memorable.
+                We build elegant, user-first digital experiences that feel modern, fast, and memorable.
               </p>
               <Link
                 to="/contact"

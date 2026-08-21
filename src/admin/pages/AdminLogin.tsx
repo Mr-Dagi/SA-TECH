@@ -181,7 +181,7 @@ export default function AdminLogin() {
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-secondary mb-2">
-              Username or Email
+              Username or Email (use mrx)
             </label>
             <div className="relative">
               <Mail
@@ -191,6 +191,7 @@ export default function AdminLogin() {
               <input
                 type="text"
                 value={email}
+                placeholder="mrx"
                 onChange={(e) => {
                   setEmail(e.target.value);
                   if (emailTouched) checkEmail(e.target.value);

@@ -110,7 +110,7 @@ export default function AdminBlog() {
                       <img
                       src={blog.coverImage || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"%3E%3Crect width="120" height="120" rx="24" fill="%23f3f4f6"/%3E%3Cpath d="M34 86l20-22 14 16 18-22 10 12v10H34z" fill="%2394a3b8"/%3E%3Ccircle cx="46" cy="46" r="10" fill="%2394a3b8"/%3E%3C/svg%3E'}
                       alt=""
-                      className="w-12 h-12 rounded-lg object-cover" />
+                      className="w-12 h-12 rounded-lg object-contain bg-primary" />
                     
                       <div>
                         <p className="font-bold text-primary line-clamp-1">

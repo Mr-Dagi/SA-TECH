@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { DataProvider } from './shared/context/DataContext';
 import { ThemeProvider } from './shared/context/ThemeContext';
@@ -27,7 +27,6 @@ const AdminProjects = lazy(() => import('./admin/pages/AdminProjects'));
 const AdminBlog = lazy(() => import('./admin/pages/AdminBlog'));
 const AdminMessages = lazy(() => import('./admin/pages/AdminMessages'));
 const AdminSettings = lazy(() => import('./admin/pages/AdminSettings'));
-const ChatAssistant = lazy(() => import('./shared/components/ui/ChatAssistant'));
 
 const adminFallback = (
   <div className="min-h-screen flex items-center justify-center bg-primary text-primary">
@@ -68,7 +67,6 @@ function AppContent() {
       {!isAdminPath && <Footer />}
       {!isAdminPath && (
         <Suspense fallback={null}>
-          <ChatAssistant />
           <BackToTopButton />
         </Suspense>
       )}

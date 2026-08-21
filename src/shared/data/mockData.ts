@@ -1,11 +1,11 @@
 import { Project, BlogPost, SiteSettings, Message } from '../types';
 
 export const initialSettings: SiteSettings = {
-  heroTitle: 'Hello, I am Dagmawi Alemayhu',
+  heroTitle: 'SA-Tech Startup',
   heroSubtitle:
-    'Product designer and digital creative director working in design field for 7 years so far, specialize user interface design.',
+    'We build clear, reliable digital products for ambitious businesses and growing teams.',
   aboutText:
-    'I combine user-focused design with frontend craftsmanship to build polished interfaces that perform reliably and feel intuitive.',
+    'SA-Tech Startup combines thoughtful design, modern engineering, and practical strategy to help businesses launch and grow online.',
   skills: [
     { name: 'React', level: 90, category: 'Frontend' },
     { name: 'TypeScript', level: 85, category: 'Frontend' },
@@ -18,16 +18,16 @@ export const initialSettings: SiteSettings = {
     { platform: 'LinkedIn', url: 'https://linkedin.com', icon: 'linkedin' },
     { platform: 'Twitter', url: 'https://twitter.com', icon: 'twitter' }
   ],
-  profileImage: '/pasted-image.jpg',
-  cvUrl: '#',
+  profileImage: '/sa-1.png',
+  cvUrl: '',
   email: 'dagia2061@gmail.com',
   phone: '+251-996-881-232',
   location: 'Addis Ababa, Ethiopia',
-  name: 'Dagmawi Alemayhu',
-  bio: 'Product designer and digital creative director',
-  avatarUrl: '/pasted-image.jpg',
-  siteTitle: 'SA teach startup',
-  tagline: 'Full Stack Developer & CS Student'
+  name: 'SA-Tech Startup',
+  bio: 'Digital products, software, and technology services',
+  avatarUrl: '/sa-1.png',
+  siteTitle: 'SA-Tech Startup',
+  tagline: 'Digital products and technology services'
 };
 
 export const initialProjects: Project[] = [

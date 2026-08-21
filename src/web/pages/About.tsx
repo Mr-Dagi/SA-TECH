@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Download, Briefcase, GraduationCap } from 'lucide-react';
+import { Briefcase, GraduationCap } from 'lucide-react';
 import { useData } from '../../shared/context/DataContext';
 import { SkillBar } from '../../shared/components/ui/SkillBar';
 import { DataState } from '../../shared/components/ui/DataState';
@@ -30,7 +30,7 @@ export default function About() {
             }}
             className="text-5xl md:text-6xl font-display font-bold mb-6">
 
-            {t('aboutHeader')} <span className="text-accent-orange">{t('aboutMeSuffix') || 'Me'}</span>
+              {t('aboutHeader')}
           </motion.h1>
           <motion.p
             initial={{
@@ -68,9 +68,9 @@ export default function About() {
 
             <div className="aspect-square rounded-[3rem] overflow-hidden border-8 border-secondary shadow-2xl relative z-10">
               <img
-                src={settings.profileImage}
-                alt="Profile"
-                className="w-full h-full object-cover" />
+                src="/sa-2.png"
+                alt="SA-Tech Startup logo"
+                className="w-full h-full object-contain p-8 sm:p-12" />
 
             </div>
             <div className="absolute -bottom-6 -right-6 w-full h-full bg-accent-blue/20 rounded-[3rem] -z-10"></div>
@@ -102,9 +102,9 @@ export default function About() {
 
             <div className="grid grid-cols-2 gap-6 mb-8">
               <div>
-                <p className="text-sm text-tertiary mb-1">{t('nameLabel')}</p>
+                <p className="text-sm text-tertiary mb-1">Company</p>
                 <p className="font-bold">
-                  {settings.heroTitle.replace('Hy! I Am ', '')}
+                  SA-Tech Startup
                 </p>
               </div>
               <div>
@@ -116,22 +116,13 @@ export default function About() {
                 <p className="font-bold">{settings.location}</p>
               </div>
               <div>
-                <p className="text-sm text-tertiary mb-1">{t('availabilityLabel')}</p>
+                <p className="text-sm text-tertiary mb-1">Availability</p>
                 <p className="font-bold text-accent-green">
-                  {t('availabilityText') || 'Freelance / Full-time'}
+                  Open for partnerships
                 </p>
               </div>
             </div>
 
-            {settings.cvUrl ? (
-              <a
-                href={settings.cvUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center bg-primary border-2 border-accent-orange text-accent-orange hover:bg-accent-orange hover:text-white px-8 py-3.5 rounded-full font-bold transition-all">
-                <Download size={20} className="mr-2" /> Download CV
-              </a>
-            ) : null}
           </motion.div>
         </div>
 

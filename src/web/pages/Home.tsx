@@ -32,7 +32,6 @@ export default function Home() {
             className="flex-1 max-w-2xl">
 
             <h1 className="text-5xl md:text-7xl font-display font-bold leading-tight mb-6">
-              {t('heroTitleStart')}
               <span className="text-accent-blue">{t('heroName')}</span>
             </h1>
             <p className="text-lg text-secondary mb-8 leading-relaxed max-w-lg">
@@ -90,9 +89,9 @@ export default function Home() {
 
             <div className="relative w-full max-w-md mx-auto aspect-square rounded-full bg-gradient-to-tr from-accent-orange/20 to-accent-blue/20 flex items-center justify-center p-8">
               <img
-                src={settings.profileImage}
-                alt="Profile"
-                className="w-full h-full object-cover rounded-full shadow-2xl" />
+                src="/sa-2.png"
+                alt="SA-Tech Startup logo"
+                className="w-full h-full object-contain rounded-full p-6 sm:p-10 shadow-2xl" />
 
 
               {/* Floating Badges */}
@@ -233,7 +232,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why Choose Me */}
+      {/* Why Choose SA-Tech */}
       <section className="py-20 container mx-auto px-6 md:px-12">
         <div className="flex flex-col md:flex-row items-center gap-16">
           <div className="flex-1">
@@ -264,9 +263,9 @@ export default function Home() {
           <div className="flex-1 relative">
             <div className="bg-gradient-to-br from-accent-orange/20 to-accent-red/20 rounded-[3rem] p-8 aspect-square flex items-end justify-center relative overflow-hidden">
               <img
-                src={settings.profileImage}
-                alt="Profile"
-                className="w-3/4 h-auto object-cover rounded-t-[2rem] z-10" />
+                src="/sa-2.png"
+                alt="SA-Tech Startup logo"
+                className="w-full h-full object-contain p-8 sm:p-12 z-10" />
 
 
               <div className="absolute bottom-10 left-0 bg-secondary p-5 rounded-2xl shadow-xl border border-color z-20 flex items-center gap-4">
@@ -275,7 +274,7 @@ export default function Home() {
                 </div>
                 <div>
                   <p className="font-bold text-lg">{t('active')}</p>
-                  <p className="text-sm text-secondary">chat your problem</p>
+                  <p className="text-sm text-secondary">talk to our team</p>
                 </div>
               </div>
             </div>
@@ -288,7 +287,7 @@ export default function Home() {
         <div className="container mx-auto px-6 md:px-12">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-display font-bold mb-4">
-              {t('recentProjects')} <span className="text-accent-blue">Project</span>
+              {t('recentProjects')}
             </h2>
           </div>
 
@@ -312,11 +311,11 @@ export default function Home() {
                 }}
                 className="group relative rounded-3xl overflow-hidden bg-secondary border border-color shadow-md">
 
-                <div className="aspect-[4/3] overflow-hidden">
+                <div className="aspect-[4/3] overflow-hidden bg-primary">
                   <img
                     src={project.images[0]}
                     alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
 
                 </div>
                 <div className="p-6">

@@ -62,18 +62,22 @@ const getVisitorId = (showToast?: (type: 'success' | 'error' | 'info', message: 
 
 const toArray = <T,>(value: T[] | null | undefined): T[] => (Array.isArray(value) ? value : []);
 
-const ADMIN_EMAILS = ['mrx@rgxhqvxhnhzwsnyikvok.supabase.co'];
+const ADMIN_EMAILS = (import.meta.env.VITE_ADMIN_EMAILS ?? '')
+  .split(',')
+  .map((email: string) => email.trim().toLowerCase())
+  .filter(Boolean);
 
 const isAdminSession = (session: Session | null | undefined) => {
   const email = session?.user?.email?.toLowerCase().trim();
-  return Boolean(email && ADMIN_EMAILS.includes(email));
+  const role = session?.user?.app_metadata?.role;
+  return role === 'admin' || Boolean(email && ADMIN_EMAILS.includes(email));
 };
 
-// Allowed URL origins for external resources (profile image, CV, etc.)
+// Allowed URL origins for trusted public documents.
 const ALLOWED_URL_ORIGINS = [
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_ALLOWED_ASSET_ORIGIN
-].filter(Boolean);
+].filter((origin): origin is string => Boolean(origin));
 
 /**
  * Returns the URL if it is a relative path or belongs to an allowed origin.
@@ -121,6 +125,101 @@ const normalizeBlog = (blog: BlogPost & { visible?: boolean }): BlogPost => ({
   published: typeof blog.published === 'boolean' ? blog.published : Boolean(blog.visible)
 });
 
+const fromProjectRow = (row: Record<string, any>): Project => normalizeProject({
+  ...row,
+  techStack: row.techStack ?? row.techstack ?? [],
+  videoUrl: row.videoUrl ?? row.videourl,
+  githubUrl: row.githubUrl ?? row.githuburl,
+  liveUrl: row.liveUrl ?? row.liveurl,
+  averageRating: row.averageRating ?? row.averagerating ?? 0,
+  createdAt: row.createdAt ?? row.createdat
+} as Project);
+
+const fromBlogRow = (row: Record<string, any>): BlogPost => normalizeBlog({
+  ...row,
+  coverImage: row.coverImage ?? row.coverimage,
+  createdAt: row.createdAt ?? row.createdat,
+  published: row.published ?? row.visible
+} as BlogPost & { visible?: boolean });
+
+const fromMessageRow = (row: Record<string, any>): Message => ({
+  ...row,
+  createdAt: row.createdAt ?? row.createdat
+} as Message);
+
+const toProjectRow = (project: Partial<Project>) => ({
+  id: project.id,
+  title: project.title,
+  description: project.description,
+  techstack: project.techStack,
+  images: project.images,
+  videourl: project.videoUrl,
+  githuburl: project.githubUrl,
+  liveurl: project.liveUrl,
+  ratings: project.ratings,
+  averagerating: project.averageRating,
+  comments: project.comments,
+  createdat: project.createdAt,
+  featured: project.featured,
+  visible: project.visible
+});
+
+const toBlogRow = (blog: Partial<BlogPost>) => ({
+  id: blog.id,
+  title: blog.title,
+  slug: blog.slug,
+  content: blog.content,
+  excerpt: blog.excerpt,
+  coverimage: blog.coverImage,
+  category: blog.category,
+  tags: blog.tags,
+  comments: blog.comments,
+  createdat: blog.createdAt,
+  published: blog.published
+});
+
+const toMessageRow = (message: Message) => ({
+  id: message.id,
+  name: message.name,
+  email: message.email,
+  message: message.message,
+  createdat: message.createdAt,
+  read: message.read,
+  response: message.response
+});
+
+const fromSettingsRow = (row: Record<string, any>): SiteSettings => ({
+  ...row,
+  heroTitle: row.heroTitle ?? row.herotitle,
+  heroSubtitle: row.heroSubtitle ?? row.herosubtitle,
+  aboutText: row.aboutText ?? row.abouttext,
+  socialLinks: row.socialLinks ?? row.sociallinks,
+  profileImage: row.profileImage ?? row.profileimage,
+  cvUrl: row.cvUrl ?? row.cvurl,
+  avatarUrl: row.avatarUrl ?? row.avatarurl,
+  siteTitle: row.siteTitle ?? row.sitetitle,
+  tagline: row.tagline
+} as SiteSettings);
+
+const toSettingsRow = (settings: SiteSettings) => ({
+  id: 'site-settings',
+  herotitle: settings.heroTitle,
+  herosubtitle: settings.heroSubtitle,
+  abouttext: settings.aboutText,
+  skills: settings.skills,
+  sociallinks: settings.socialLinks,
+  profileimage: '/sa-1.png',
+  cvurl: settings.cvUrl,
+  email: settings.email,
+  phone: settings.phone,
+  location: settings.location,
+  name: settings.name,
+  bio: settings.bio,
+  avatarurl: '/sa-1.png',
+  sitetitle: settings.siteTitle,
+  tagline: settings.tagline
+});
+
 const getErrorMessage = (fallback: string, error: unknown) =>
   error instanceof Error ? error.message : fallback;
 
@@ -153,23 +252,23 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         supabase.from('site_settings').select('*').limit(1).maybeSingle()
       ]);
 
-      const projectSource = projectsRes.error || !projectsRes.data?.length ? initialProjects : (projectsRes.data as Project[]);
-      setProjects(projectSource.map(normalizeProject));
+      const projectSource = projectsRes.error || !projectsRes.data?.length ? initialProjects : projectsRes.data;
+      setProjects(projectSource.map((project) => fromProjectRow(project as Record<string, any>)));
 
-      const blogSource = blogsRes.error || !blogsRes.data?.length ? initialBlogs : (blogsRes.data as Array<BlogPost & { visible?: boolean }>);
-      setBlogs(blogSource.map(normalizeBlog));
+      const blogSource = blogsRes.error || !blogsRes.data?.length ? initialBlogs : blogsRes.data;
+      setBlogs(blogSource.map((blog) => fromBlogRow(blog as Record<string, any>)));
 
-      const rawSettings = settingsRes.error || !settingsRes.data ? initialSettings : (settingsRes.data as SiteSettings);
+      const rawSettings = settingsRes.error || !settingsRes.data ? initialSettings : fromSettingsRow(settingsRes.data as Record<string, any>);
       setSettings({
         ...rawSettings,
-        profileImage: sanitizeUrl(rawSettings.profileImage) || '/default-profile.png',
+        profileImage: '/sa-1.png',
         cvUrl: sanitizeUrl(rawSettings.cvUrl) || ''
       });
 
       if (activeSession && adminStatus) {
-        const messagesRes = await supabase.from('messages').select('*').order('createdAt', { ascending: false });
+        const messagesRes = await supabase.from('messages').select('*').order('createdat', { ascending: false });
         if (messagesRes.data) {
-          setMessages(messagesRes.data as Message[]);
+          setMessages(messagesRes.data.map((message) => fromMessageRow(message as Record<string, any>)));
         }
       } else {
         setMessages([]);
@@ -180,7 +279,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setBlogs(initialBlogs.map(normalizeBlog));
       setSettings({
         ...initialSettings,
-        profileImage: sanitizeUrl(initialSettings.profileImage) || '/default-profile.png',
+        profileImage: '/sa-1.png',
         cvUrl: sanitizeUrl(initialSettings.cvUrl) || ''
       });
     } finally {
@@ -214,7 +313,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const normalizeAdminLoginEmail = (value: string) => {
     const normalized = value.trim().toLowerCase().replace(/^@/, '');
     if (normalized === 'mrx') {
-      return 'mrx@rgxhqvxhnhzwsnyikvok.supabase.co';
+      return ADMIN_EMAILS[0] || value.trim().toLowerCase();
     }
     return value.trim().toLowerCase();
   };
@@ -270,7 +369,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       comments: []
     };
 
-    const { error: insertError } = await supabase.from('projects').insert(newProject);
+    const { error: insertError } = await supabase.from('projects').insert(toProjectRow(newProject));
     if (insertError) {
       setError(insertError.message);
       showToast('error', insertError.message || 'Failed to add project');
@@ -281,7 +380,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateProject = async (id: string, data: Partial<Project>) => {
-    const { error: updateError } = await supabase.from('projects').update(data).eq('id', id);
+    const { error: updateError } = await supabase.from('projects').update(toProjectRow(data)).eq('id', id);
     if (updateError) {
       setError(updateError.message);
       showToast('error', updateError.message || 'Failed to update project');
@@ -314,7 +413,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const { error: ratingError } = await supabase
       .from('projects')
-      .update({ ratings: nextRatings, averageRating })
+      .update({ ratings: nextRatings, averagerating: averageRating })
       .eq('id', id);
     if (ratingError) {
       setError(ratingError.message);
@@ -359,7 +458,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       comments: []
     };
 
-    const { error: insertError } = await supabase.from('blogs').insert(newBlog);
+    const { error: insertError } = await supabase.from('blogs').insert(toBlogRow(newBlog));
     if (insertError) {
       setError(insertError.message);
       showToast('error', insertError.message || 'Failed to add blog post');
@@ -370,7 +469,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateBlog = async (id: string, data: Partial<BlogPost>) => {
-    const { error: updateError } = await supabase.from('blogs').update(data).eq('id', id);
+    const { error: updateError } = await supabase.from('blogs').update(toBlogRow(data)).eq('id', id);
     if (updateError) {
       setError(updateError.message);
       showToast('error', updateError.message || 'Failed to update blog post');
@@ -421,7 +520,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       read: false
     };
 
-    const { error: insertError } = await supabase.from('messages').insert(newMessage);
+    const { error: insertError } = await supabase.from('messages').insert(toMessageRow(newMessage));
     if (insertError) {
       setError(insertError.message);
       showToast('error', insertError.message || 'Failed to send message');
@@ -470,11 +569,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Sanitise URL fields before persisting so injected URLs can never reach the DB
     const nextSettings = {
       ...rawNext,
-      profileImage: sanitizeUrl(rawNext.profileImage) || settings.profileImage,
+      profileImage: '/sa-1.png',
       cvUrl: sanitizeUrl(rawNext.cvUrl) || settings.cvUrl
     };
 
-    const { error: updateError } = await supabase.from('site_settings').upsert({ id: 'site-settings', ...nextSettings });
+    const { error: updateError } = await supabase.from('site_settings').upsert(toSettingsRow(nextSettings));
     if (updateError) {
       setError(updateError.message);
       showToast('error', updateError.message || 'Failed to update settings in Supabase');

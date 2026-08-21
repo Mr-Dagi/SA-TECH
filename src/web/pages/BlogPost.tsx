@@ -97,12 +97,12 @@ export default function BlogPost() {
             opacity: 1,
             y: 0
           }}
-          className="rounded-[2rem] overflow-hidden mb-16 border border-color shadow-xl">
+          className="rounded-[2rem] overflow-hidden mb-16 border border-color shadow-xl bg-primary aspect-[21/9]">
           
             <img
             src={post.coverImage}
             alt={post.title}
-            className="w-full h-auto object-cover aspect-[21/9]" />
+            className="w-full h-full object-contain" />
           
           </motion.div>
         }

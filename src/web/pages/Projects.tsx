@@ -64,7 +64,7 @@ export default function Projects() {
             }}
             className="text-lg text-secondary max-w-2xl mx-auto">
             
-            {t('projectsSubtitle') || 'A collection of my recent work, side projects, and experiments.'}
+            {t('projectsSubtitle') || 'Selected digital products, platforms, and technology solutions.'}
           </motion.p>
         </div>
 

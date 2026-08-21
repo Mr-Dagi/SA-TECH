@@ -31,7 +31,7 @@ export default function AdminSettings() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">
-                Hero Title
+                Company Name
               </label>
               <input
                 type="text"
@@ -47,7 +47,7 @@ export default function AdminSettings() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">
-                Hero Subtitle
+                Company Summary
               </label>
               <textarea
                 rows={2}
@@ -63,7 +63,7 @@ export default function AdminSettings() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">
-                About Text
+                About the Company
               </label>
               <textarea
                 rows={4}
@@ -88,7 +88,7 @@ export default function AdminSettings() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">
-                Profile Image URL
+                Company Logo
               </label>
               <div className="flex gap-4">
                 <input
@@ -100,19 +100,20 @@ export default function AdminSettings() {
                     profileImage: e.target.value
                   })
                   }
-                  placeholder="Optional - leave empty for default"
+                  placeholder="Company logo is managed by the site"
+                  disabled
                   className="flex-1 bg-primary border border-color rounded-lg px-4 py-2" />
                 
                 <img
                   src={formData.profileImage}
                   alt="Preview"
-                  className="w-10 h-10 rounded-lg object-cover border border-color" />
+                  className="w-10 h-10 rounded-lg object-contain bg-primary border border-color" />
                 
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">
-                CV Download URL
+                Public Document URL
               </label>
               <input
                 type="url"

@@ -31,12 +31,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
       }}
       className="group bg-secondary rounded-3xl overflow-hidden border border-color shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full">
       
-      <div className="relative aspect-video overflow-hidden">
+      <div className="relative aspect-video overflow-hidden bg-primary">
         <img
           src={project.images[0] || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 120 120"%3E%3Crect width="120" height="120" rx="24" fill="%23f3f4f6"/%3E%3Cpath d="M34 86l20-22 14 16 18-22 10 12v10H34z" fill="%2394a3b8"/%3E%3Ccircle cx="46" cy="46" r="10" fill="%2394a3b8"/%3E%3C/svg%3E'}
           alt={project.title}
           onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 120 120"%3E%3Crect width="120" height="120" rx="24" fill="%23f3f4f6"/%3E%3Cpath d="M34 86l20-22 14 16 18-22 10 12v10H34z" fill="%2394a3b8"/%3E%3Ccircle cx="46" cy="46" r="10" fill="%2394a3b8"/%3E%3C/svg%3E'; }}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
         
         <div className="absolute top-4 right-4 bg-secondary/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
           <Star size={14} className="text-yellow-500 fill-yellow-500" />

@@ -42,9 +42,9 @@ export default function AdminMessages() {
   };
 
   const buildMailto = (email: string, name: string, originalMessage: string) => {
-    const subject = encodeURIComponent(`Re: Your message on the portfolio site`);
+    const subject = encodeURIComponent(`Re: Your message to SA-Tech Startup`);
     const body = encodeURIComponent(
-      `Hi ${name},\n\nThank you for reaching out. Following up on your message:\n\n> ${originalMessage}\n\nBest,\nDagmawi`
+      `Hi ${name},\n\nThank you for reaching out to SA-Tech Startup. Following up on your message:\n\n> ${originalMessage}\n\nBest regards,\nSA-Tech Startup`
     );
     return `mailto:${email}?subject=${subject}&body=${body}`;
   };
