@@ -65,8 +65,9 @@ export default function AdminLogin() {
     }
 
     const normalized = trimmed.toLowerCase().replace(/^@/, '');
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized);
     const isValidUsername = normalized.length >= 2 && /^[a-z0-9._-]+$/i.test(normalized);
-    if (!isValidUsername) {
+    if (!isValidEmail && !isValidUsername) {
       setEmailError('Please enter a valid username or email');
       return false;
     }
@@ -181,7 +182,7 @@ export default function AdminLogin() {
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-secondary mb-2">
-              Username or Email (use mrx)
+              Username or Email
             </label>
             <div className="relative">
               <Mail
@@ -191,7 +192,6 @@ export default function AdminLogin() {
               <input
                 type="text"
                 value={email}
-                placeholder="mrx"
                 onChange={(e) => {
                   setEmail(e.target.value);
                   if (emailTouched) checkEmail(e.target.value);

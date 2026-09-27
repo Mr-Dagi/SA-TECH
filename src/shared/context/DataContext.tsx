@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabaseClient';
 import { initialSettings, initialProjects, initialBlogs } from '../data/mockData';
 import { BlogPost, Comment, Message, Project, ProjectRating, SiteSettings } from '../types';
 import { useToast } from '../components/ui/Toast';
+import emailjs from 'emailjs-com';
 
 type ProjectInput = Omit<Project, 'id' | 'createdAt' | 'ratings' | 'averageRating' | 'comments'>;
 type BlogInput = Omit<BlogPost, 'id' | 'createdAt' | 'comments'> & { category?: string };
@@ -312,7 +313,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const normalizeAdminLoginEmail = (value: string) => {
     const normalized = value.trim().toLowerCase().replace(/^@/, '');
-    if (normalized === 'mrx') {
+    if (normalized === 'mrx' || normalized === 'mrx@yourdomain.com') {
       return ADMIN_EMAILS[0] || value.trim().toLowerCase();
     }
     return value.trim().toLowerCase();
@@ -526,6 +527,23 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       showToast('error', insertError.message || 'Failed to send message');
       return;
     }
+
+    try {
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          from_name: messageData.name || 'Visitor',
+          from_email: messageData.email,
+          message: messageData.text || messageData.content || '',
+          to_email: 'dagia2061@gmail.com'
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+    } catch (emailError) {
+      console.error('EmailJS send error:', emailError);
+    }
+
     showToast('success', 'Message sent! I\'ll get back to you soon.');
   };
 

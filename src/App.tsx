@@ -17,6 +17,7 @@ import ProjectDetail from './web/pages/ProjectDetail';
 import Blog from './web/pages/Blog';
 import BlogPost from './web/pages/BlogPost';
 import Contact from './web/pages/Contact';
+import Privacy from './web/pages/Privacy';
 import NotFound from './web/pages/NotFound';
 import { AdminLayout } from './admin/components/layout/AdminLayout';
 import { ProtectedRoute } from './admin/components/ProtectedRoute';
@@ -53,6 +54,7 @@ function AppContent() {
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:id" element={<BlogPost />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/privacy" element={<Privacy />} />
 
         <Route path="/tlku/login" element={<Suspense fallback={adminFallback}><AdminLogin /></Suspense>} />
         <Route path="/tlku" element={<ProtectedRoute><Suspense fallback={adminFallback}><AdminLayout><Dashboard /></AdminLayout></Suspense></ProtectedRoute>} />

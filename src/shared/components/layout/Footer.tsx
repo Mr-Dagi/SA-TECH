@@ -110,6 +110,13 @@ export const Footer = () => {
                   {t('contact')}
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/privacy"
+                  className="text-secondary transition-colors hover:text-accent-orange hover:underline">
+                  Privacy Policy
+                </Link>
+              </li>
             </ul>
           </div>
 
