@@ -9,7 +9,8 @@ import {
   LogOut,
   Home,
   Menu,
-  X
+  X,
+  Users
 } from 'lucide-react';
 import { useData } from '../../../shared/context/DataContext';
 export const AdminLayout: React.FC<{
@@ -46,6 +47,11 @@ export const AdminLayout: React.FC<{
     name: 'Settings',
     path: '/tlku/settings',
     icon: <Settings size={20} />
+  },
+  {
+    name: 'Users',
+    path: '/tlku/users',
+    icon: <Users size={20} />
   }];
 
   const handleLogout = async () => {

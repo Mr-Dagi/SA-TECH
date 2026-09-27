@@ -28,6 +28,7 @@ const AdminProjects = lazy(() => import('./admin/pages/AdminProjects'));
 const AdminBlog = lazy(() => import('./admin/pages/AdminBlog'));
 const AdminMessages = lazy(() => import('./admin/pages/AdminMessages'));
 const AdminSettings = lazy(() => import('./admin/pages/AdminSettings'));
+const AdminUsers = lazy(() => import('./admin/pages/AdminUsers'));
 
 const adminFallback = (
   <div className="min-h-screen flex items-center justify-center bg-primary text-primary">
@@ -62,6 +63,7 @@ function AppContent() {
         <Route path="/tlku/blog" element={<ProtectedRoute><Suspense fallback={adminFallback}><AdminLayout><AdminBlog /></AdminLayout></Suspense></ProtectedRoute>} />
         <Route path="/tlku/messages" element={<ProtectedRoute><Suspense fallback={adminFallback}><AdminLayout><AdminMessages /></AdminLayout></Suspense></ProtectedRoute>} />
         <Route path="/tlku/settings" element={<ProtectedRoute><Suspense fallback={adminFallback}><AdminLayout><AdminSettings /></AdminLayout></Suspense></ProtectedRoute>} />
+        <Route path="/tlku/users" element={<ProtectedRoute><Suspense fallback={adminFallback}><AdminLayout><AdminUsers /></AdminLayout></Suspense></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
