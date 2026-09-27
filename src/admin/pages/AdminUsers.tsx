@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Trash2, Key, Shield, Mail, Lock, UserPlus } from 'lucide-react';
-import { supabaseAdmin } from '../../shared/lib/supabaseClient';
+import { Plus, Trash2, Key, Shield, Mail, Lock, UserPlus, AlertTriangle } from 'lucide-react';
+import { supabase, supabaseAdmin } from '../../shared/lib/supabaseClient';
 import { DataState } from '../../shared/components/ui/DataState';
 import type { User } from '@supabase/supabase-js';
 
@@ -21,6 +21,7 @@ export default function AdminUsers() {
   const [changingPasswordId, setChangingPasswordId] = useState<string | null>(null);
   const [newPasswordValue, setNewPasswordValue] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [hasAdminKey, setHasAdminKey] = useState(true);
 
   useEffect(() => {
     fetchUsers();
@@ -29,16 +30,20 @@ export default function AdminUsers() {
   const fetchUsers = async () => {
     try {
       const { data, error: fetchError } = await supabaseAdmin.auth.admin.listUsers();
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        setHasAdminKey(false);
+        throw fetchError;
+      }
       const adminUsers = (data.users || []).map((u: User) => ({
         id: u.id,
         email: u.email || '',
-        role: u.app_metadata?.role || 'user',
+        role: (u.app_metadata as any)?.role || 'user',
         created_at: u.created_at || ''
       }));
       setUsers(adminUsers);
     } catch (err) {
-      setError('Failed to load users');
+      setHasAdminKey(false);
+      setError('');
     } finally {
       setIsLoading(false);
     }
@@ -47,6 +52,7 @@ export default function AdminUsers() {
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
+    setError(null);
     try {
       const { error: signUpError } = await supabase.auth.signUp({
         email: newEmail,
@@ -60,8 +66,8 @@ export default function AdminUsers() {
       setNewPassword('');
       setShowAddForm(false);
       await fetchUsers();
-    } catch (err) {
-      setError('Failed to create user');
+    } catch (err: any) {
+      setError(err.message || 'Failed to create user');
     } finally {
       setIsSaving(false);
     }
@@ -70,17 +76,20 @@ export default function AdminUsers() {
   const handleChangePassword = async (userId: string) => {
     if (!newPasswordValue) return;
     setIsSaving(true);
+    setError(null);
     try {
+      const user = users.find((u) => u.id === userId);
+      if (!user) throw new Error('User not found');
       const { error: updateError } = await supabaseAdmin.auth.admin.updateUserByEmail(
-        users.find((u) => u.id === userId)?.email || '',
+        user.email,
         { password: newPasswordValue }
       );
       if (updateError) throw updateError;
       setChangingPasswordId(null);
       setNewPasswordValue('');
       await fetchUsers();
-    } catch (err) {
-      setError('Failed to update password');
+    } catch (err: any) {
+      setError(err.message || 'Failed to update password');
     } finally {
       setIsSaving(false);
     }
@@ -89,20 +98,20 @@ export default function AdminUsers() {
   const handleDeleteUser = async (userId: string) => {
     if (!window.confirm('Are you sure you want to delete this user? This cannot be undone.')) return;
     setIsSaving(true);
+    setError(null);
     try {
-      const userEmail = users.find((u) => u.id === userId)?.email || '';
       const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
       if (deleteError) throw deleteError;
       await fetchUsers();
-    } catch (err) {
-      setError('Failed to delete user');
+    } catch (err: any) {
+      setError(err.message || 'Failed to delete user');
     } finally {
       setIsSaving(false);
     }
   };
 
   const dataState = <DataState isLoading={isLoading} error={error} />;
-  if (isLoading || error) return dataState;
+  if (isLoading) return dataState;
 
   return (
     <div className="max-w-4xl">
@@ -115,6 +124,16 @@ export default function AdminUsers() {
           <UserPlus size={20} /> {showAddForm ? 'Cancel' : 'Add User'}
         </button>
       </div>
+
+      {!hasAdminKey && (
+        <div className="bg-orange-500/10 border border-orange-500/50 text-orange-500 p-4 rounded-xl text-sm mb-6 flex items-center gap-3">
+          <AlertTriangle size={20} />
+          <div>
+            <p className="font-bold">Admin key not configured</p>
+            <p>Add VITE_SUPABASE_SERVICE_ROLE_KEY to .env for full user management. Users can still be created.</p>
+          </div>
+        </div>
+      )}
 
       {showAddForm && (
         <div className="bg-secondary p-6 rounded-2xl border border-color shadow-sm mb-6">
@@ -148,6 +167,12 @@ export default function AdminUsers() {
               {isSaving ? 'Creating...' : 'Create User'}
             </button>
           </form>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-4 rounded-xl text-sm mb-6">
+          {error}
         </div>
       )}
 
@@ -188,6 +213,7 @@ export default function AdminUsers() {
                     <button
                       onClick={() => {
                         setChangingPasswordId(changingPasswordId === user.id ? null : user.id);
+                        setError(null);
                       }}
                       className="p-2 rounded-lg text-accent-blue hover:bg-accent-blue/10 transition-colors"
                       title="Change Password"
@@ -226,7 +252,7 @@ export default function AdminUsers() {
             ))}
           </tbody>
         </table>
-        {users.length === 0 && (
+        {users.length === 0 && !isLoading && (
           <div className="text-center py-12 text-secondary">No users found.</div>
         )}
       </div>
