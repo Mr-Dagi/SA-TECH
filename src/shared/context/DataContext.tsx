@@ -74,30 +74,12 @@ const isAdminSession = (session: Session | null | undefined) => {
   return role === 'admin' || Boolean(email && ADMIN_EMAILS.includes(email));
 };
 
-// Allowed URL origins for trusted public documents.
-const ALLOWED_URL_ORIGINS = [
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_ALLOWED_ASSET_ORIGIN
-].filter((origin): origin is string => Boolean(origin));
-
 /**
- * Returns the URL if it is a relative path or belongs to an allowed origin.
- * Returns an empty string otherwise to prevent open-redirect / SSRF attacks.
- */
+  * Sanitises a URL string - trims whitespace and rejects hash-only values.
+  */
 const sanitizeUrl = (url: string | undefined): string => {
   if (!url) return '';
-  const trimmed = url.trim();
-  if (trimmed === '#' || trimmed === '') return '';
-  try {
-    const parsed = new URL(trimmed, window.location.href);
-    // Allow relative URLs (same origin after parsing)
-    if (parsed.origin === window.location.origin) return trimmed;
-    // Allow explicitly whitelisted external origins
-    if (ALLOWED_URL_ORIGINS.some((origin) => parsed.origin === new URL(origin).origin)) return trimmed;
-  } catch {
-    // Malformed URL – block it
-  }
-  return '';
+  return url.trim() === '#' ? '' : url.trim();
 };
 
 const normalizeProject = (project: Project): Project => {
@@ -209,7 +191,7 @@ const toSettingsRow = (settings: SiteSettings) => ({
   abouttext: settings.aboutText,
   skills: settings.skills,
   sociallinks: settings.socialLinks,
-  profileimage: '/sa-1.png',
+  profileimage: settings.profileImage || '/sa-1.png',
   cvurl: settings.cvUrl,
   email: settings.email,
   phone: settings.phone,
@@ -262,7 +244,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const rawSettings = settingsRes.error || !settingsRes.data ? initialSettings : fromSettingsRow(settingsRes.data as Record<string, any>);
       setSettings({
         ...rawSettings,
-        profileImage: '/sa-1.png',
+        profileImage: rawSettings.profileImage || '/sa-1.png',
         cvUrl: sanitizeUrl(rawSettings.cvUrl) || ''
       });
 
@@ -278,11 +260,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setError(getErrorMessage('Unable to load data from Supabase right now.', loadError));
       setProjects(initialProjects.map(normalizeProject));
       setBlogs(initialBlogs.map(normalizeBlog));
-      setSettings({
-        ...initialSettings,
-        profileImage: '/sa-1.png',
-        cvUrl: sanitizeUrl(initialSettings.cvUrl) || ''
-      });
+    setSettings({
+      ...initialSettings,
+      profileImage: initialSettings.profileImage || '/sa-1.png',
+      cvUrl: sanitizeUrl(initialSettings.cvUrl) || ''
+    });
     } finally {
       setIsLoading(false);
     }
@@ -587,7 +569,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Sanitise URL fields before persisting so injected URLs can never reach the DB
     const nextSettings = {
       ...rawNext,
-      profileImage: '/sa-1.png',
+      profileImage: rawNext.profileImage || '/sa-1.png',
       cvUrl: sanitizeUrl(rawNext.cvUrl) || settings.cvUrl
     };
 
