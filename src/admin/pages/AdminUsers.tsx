@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Trash2, Key, Shield, Mail, Lock, UserPlus, AlertTriangle } from 'lucide-react';
-import { supabase, supabaseAdmin } from '../../shared/lib/supabaseClient';
+import { Plus, Trash2, Key, Shield, Mail, AlertTriangle } from 'lucide-react';
+import { supabase } from '../../shared/lib/supabaseClient';
 import { DataState } from '../../shared/components/ui/DataState';
 import type { User } from '@supabase/supabase-js';
 
@@ -21,7 +21,7 @@ export default function AdminUsers() {
   const [changingPasswordId, setChangingPasswordId] = useState<string | null>(null);
   const [newPasswordValue, setNewPasswordValue] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [hasAdminKey, setHasAdminKey] = useState(true);
+  const [isAdminDisabled, setIsAdminDisabled] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -29,21 +29,18 @@ export default function AdminUsers() {
 
   const fetchUsers = async () => {
     try {
-      const { data, error: fetchError } = await supabaseAdmin.auth.admin.listUsers();
-      if (fetchError) {
-        setHasAdminKey(false);
-        throw fetchError;
-      }
-      const adminUsers = (data.users || []).map((u: User) => ({
+      const res = await fetch('/api/admin/users');
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      const adminUsers = (data.users || []).map((u: any) => ({
         id: u.id,
         email: u.email || '',
         role: (u.app_metadata as any)?.role || 'user',
         created_at: u.created_at || ''
       }));
       setUsers(adminUsers);
-    } catch (err) {
-      setHasAdminKey(false);
-      setError('');
+    } catch {
+      setIsAdminDisabled(true);
     } finally {
       setIsLoading(false);
     }
@@ -57,9 +54,7 @@ export default function AdminUsers() {
       const { error: signUpError } = await supabase.auth.signUp({
         email: newEmail,
         password: newPassword,
-        options: {
-          data: { role: 'admin' }
-        }
+        options: { data: { role: 'admin' } }
       });
       if (signUpError) throw signUpError;
       setNewEmail('');
@@ -73,18 +68,17 @@ export default function AdminUsers() {
     }
   };
 
-  const handleChangePassword = async (userId: string) => {
+  const handleChangePassword = async (userId: string, email: string) => {
     if (!newPasswordValue) return;
     setIsSaving(true);
     setError(null);
     try {
-      const user = users.find((u) => u.id === userId);
-      if (!user) throw new Error('User not found');
-      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserByEmail(
-        user.email,
-        { password: newPasswordValue }
-      );
-      if (updateError) throw updateError;
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: newPasswordValue })
+      });
+      if (!res.ok) throw new Error(await res.text());
       setChangingPasswordId(null);
       setNewPasswordValue('');
       await fetchUsers();
@@ -100,8 +94,8 @@ export default function AdminUsers() {
     setIsSaving(true);
     setError(null);
     try {
-      const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
-      if (deleteError) throw deleteError;
+      const res = await fetch(`/api/admin/users?userId=${userId}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error(await res.text());
       await fetchUsers();
     } catch (err: any) {
       setError(err.message || 'Failed to delete user');
@@ -125,12 +119,12 @@ export default function AdminUsers() {
         </button>
       </div>
 
-      {!hasAdminKey && (
+      {!isAdminDisabled && (
         <div className="bg-orange-500/10 border border-orange-500/50 text-orange-500 p-4 rounded-xl text-sm mb-6 flex items-center gap-3">
           <AlertTriangle size={20} />
           <div>
             <p className="font-bold">Admin key not configured</p>
-            <p>Add VITE_SUPABASE_SERVICE_ROLE_KEY to .env for full user management. Users can still be created.</p>
+            <p>Add SUPABASE_SERVICE_ROLE_KEY as a Vercel environment variable for full user management. Users can still be created.</p>
           </div>
         </div>
       )}
@@ -239,7 +233,7 @@ export default function AdminUsers() {
                         className="flex-1 bg-primary border border-color rounded-lg px-4 py-2 text-sm"
                       />
                       <button
-                        onClick={() => handleChangePassword(user.id)}
+                        onClick={() => handleChangePassword(user.id, user.email)}
                         disabled={isSaving || !newPasswordValue}
                         className="bg-accent-blue hover:bg-accent-blue/90 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors disabled:opacity-50"
                       >
