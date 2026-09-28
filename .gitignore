@@ -27,3 +27,16 @@ dist-ssr
 *.sw?
 
 /src/generated/prisma
+
+# Security & unnecessary files
+.agents/
+supabase/.temp/
+deploy_snapshot/
+deploy_clean_repo/
+skills-lock.json
+prisma.config.ts
+netlify.toml
+*.pdf
+README_DEPLOY_SUPABASE.md
+DEPLOYMENT.md
+SA-Tech_Startup_Change_Report.pdf
